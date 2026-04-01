@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anagram Groups — Dry Run</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f4f0; --bg3: #eceae3;
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #8a8880;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --font-mono: 'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+    --font-sans: 'Inter','Segoe UI',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --bg2: #242420; --bg3: #2e2e2a;
+      --text: #e8e6df; --text2: #9c9a92; --text3: #6a6862;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+    }
+  }
+  body { font-family: var(--font-sans); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px; }
+  .wrap { width: 100%; max-width: 700px; }
+
+  /* ── CODE CARD ── */
+  .code-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
+  .code-card-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); font-family: var(--font-mono); }
+  .lang-badge { background: #534AB7; color: #EEEDFE; padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+  .copy-btn { cursor: pointer; background: none; border: 1px solid var(--border2); color: var(--text2); font-size: 11px; padding: 3px 10px; border-radius: 6px; font-family: var(--font-mono); transition: all .15s; }
+  .copy-btn:hover { background: var(--bg2); color: var(--text); }
+  pre { margin: 0; padding: 18px 20px; background: var(--bg); font-family: var(--font-mono); font-size: 12.5px; line-height: 1.85; color: var(--text2); overflow-x: auto; white-space: pre; }
+  .kw  { color: #7F77DD; }
+  .fn  { color: #1D9E75; }
+  .cm  { color: var(--text3); font-style: italic; }
+  .nm  { color: #EF9F27; }
+  .st  { color: #D85A30; }
+  @media (prefers-color-scheme: dark) { .kw{color:#AFA9EC} .fn{color:#5DCAA5} .nm{color:#FAC775} .st{color:#F0997B} }
+
+  /* ── DRY RUN CARD ── */
+  .dry-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+  h2 { font-size: 17px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .subtitle { font-size: 12px; color: var(--text3); margin-bottom: 22px; font-family: var(--font-mono); }
+
+  /* ── LEGEND ── */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); font-family: var(--font-mono); }
+  .legend-box { width: 13px; height: 13px; border-radius: 3px; border: 1.5px solid; }
+
+  /* ── WORDS ROW ── */
+  .words-label { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 7px; }
+  .words-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+  .word-chip {
+    padding: 7px 14px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    font-family: var(--font-mono); border: 1.5px solid var(--border);
+    background: var(--bg3); color: var(--text); transition: all .3s;
+  }
+  .word-chip.current  { border-color: #7F77DD; background: #EEEDFE; color: #26215C; }
+  .word-chip.done     { border-color: #1D9E75; background: #E1F5EE; color: #085041; }
+  .word-chip.new-group{ border-color: #D85A30; background: #FAECE7; color: #4A1B0C; }
+  .word-chip.matched  { border-color: #EF9F27; background: #FAC775; color: #412402; }
+  @media (prefers-color-scheme: dark) {
+    .word-chip.current   { background: #26215C; color: #CECBF6; border-color: #7F77DD; }
+    .word-chip.done      { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .word-chip.new-group { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+    .word-chip.matched   { background: #633806; color: #FAC775; border-color: #EF9F27; }
+  }
+
+  /* ── STEP PANEL ── */
+  .step-panel { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .step-header { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+  .code-line { font-size: 12px; color: var(--text2); line-height: 1.95; padding: 2px 10px; border-radius: 5px; font-family: var(--font-mono); }
+  .code-line.active { background: #EEEDFE; color: #26215C; }
+  @media (prefers-color-scheme: dark) { .code-line.active { background: #26215C; color: #CECBF6; } }
+
+  /* ── STATE AREA ── */
+  .state-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .state-box { flex: 1; min-width: 120px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .state-lbl { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .state-val { font-size: 12px; font-family: var(--font-mono); color: var(--text); word-break: break-all; line-height: 1.65; min-height: 18px; }
+
+  /* ── GROUPS VIZ ── */
+  .groups-area { margin-top: 14px; }
+  .groups-lbl { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .groups-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+  .group-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; min-width: 80px;
+    transition: all .3s;
+  }
+  .group-card.highlight { border-color: #EF9F27; background: #FAEEDA; }
+  @media (prefers-color-scheme: dark) { .group-card.highlight { background: #412402; border-color: #BA7517; } }
+  .group-key { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 4px; }
+  .group-words { font-size: 12px; font-family: var(--font-mono); color: var(--text); line-height: 1.7; }
+
+  .decision { font-size: 12px; margin-top: 12px; padding: 8px 12px; border-radius: 6px; border-left: 3px solid #7F77DD; background: var(--bg2); color: var(--text2); font-family: var(--font-mono); line-height: 1.6; }
+
+  /* ── NAV ── */
+  .nav { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 7px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); transition: all .15s; font-family: var(--font-sans); }
+  .btn:hover:not(:disabled) { background: var(--bg2); border-color: #7F77DD; }
+  .btn:disabled { opacity: .35; cursor: default; }
+  .step-count { font-size: 12px; color: var(--text3); margin: 0 6px; font-family: var(--font-mono); }
+
+  .result-banner { margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; background: #E1F5EE; color: #085041; border: 1px solid #5DCAA5; font-family: var(--font-mono); line-height: 1.8; }
+  @media (prefers-color-scheme: dark) { .result-banner { background: #04342C; color: #9FE1CB; border-color: #0F6E56; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ PYTHON SOURCE ══ -->
+  <div class="code-card">
+    <div class="code-card-header">
+      <span>anagram_groups.py</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="lang-badge">Python</span>
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <pre>words = [<span class="st">"eat"</span>, <span class="st">"tea"</span>, <span class="st">"tan"</span>, <span class="st">"ate"</span>, <span class="st">"nat"</span>, <span class="st">"bat"</span>]
+groups = {}
+<span class="kw">for</span> word <span class="kw">in</span> words:
+    key = <span class="st">''</span>.<span class="fn">join</span>(<span class="fn">sorted</span>(word))
+    <span class="kw">if</span> key <span class="kw">not in</span> groups:
+        groups[key] = []
+    groups[key].<span class="fn">append</span>(word)
+<span class="fn">print</span>(<span class="fn">list</span>(groups.<span class="fn">values</span>()))</pre>
+  </div>
+
+  <!-- ══ DRY RUN ══ -->
+  <div class="dry-card">
+    <h2>Anagram Groups — Dry Run</h2>
+    <div class="subtitle">words = ["eat","tea","tan","ate","nat","bat"]</div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-box" style="background:#EEEDFE;border-color:#7F77DD"></div>current word</div>
+      <div class="legend-item"><div class="legend-box" style="background:#FAECE7;border-color:#D85A30"></div>new group created</div>
+      <div class="legend-item"><div class="legend-box" style="background:#FAC775;border-color:#EF9F27"></div>appended to existing</div>
+      <div class="legend-item"><div class="legend-box" style="background:#E1F5EE;border-color:#1D9E75"></div>already processed</div>
+    </div>
+
+    <div class="words-label">words list</div>
+    <div class="words-row" id="words-viz"></div>
+
+    <div class="step-panel">
+      <div class="step-header" id="step-title">Step</div>
+      <div id="code-lines"></div>
+      <div class="state-row">
+        <div class="state-box">
+          <div class="state-lbl">word</div>
+          <div class="state-val" id="sv-word">—</div>
+        </div>
+        <div class="state-box">
+          <div class="state-lbl">key (sorted)</div>
+          <div class="state-val" id="sv-key">—</div>
+        </div>
+        <div class="state-box">
+          <div class="state-lbl">key in groups?</div>
+          <div class="state-val" id="sv-exists">—</div>
+        </div>
+      </div>
+      <div class="groups-area">
+        <div class="groups-lbl">groups dict</div>
+        <div class="groups-grid" id="groups-viz"></div>
+      </div>
+      <div class="decision" id="decision-box"></div>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="prev-btn" onclick="move(-1)" disabled>← Prev</button>
+      <span class="step-count" id="step-count"></span>
+      <button class="btn" id="next-btn" onclick="move(1)">Next →</button>
+    </div>
+    <div id="result-banner" style="display:none" class="result-banner"></div>
+  </div>
+
+</div>
+<script>
+const words = ["eat","tea","tan","ate","nat","bat"];
+
+function buildSteps() {
+  const steps = [];
+  const groups = {};
+
+  steps.push({
+    title: "Init",
+    wordIdx: null, chipState: words.map(() => 'idle'),
+    word: null, key: null, exists: null,
+    groups: {}, highlightKey: null,
+    lines: ["words = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]", "groups = {}"],
+    decision: "Initialize words list and empty groups dict. Begin for loop."
+  });
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    const key = word.split('').sort().join('');
+    const exists = key in groups;
+
+    const chipState = words.map((_, j) => {
+      if (j < i) return 'done';
+      if (j === i) return exists ? 'matched' : 'new-group';
+      return 'idle';
+    });
+
+    const groupsBefore = JSON.parse(JSON.stringify(groups));
+
+    if (!exists) groups[key] = [];
+    groups[key].push(word);
+
+    const groupsAfter = JSON.parse(JSON.stringify(groups));
+
+    steps.push({
+      title: `Iteration ${i+1}  →  word = "${word}"`,
+      wordIdx: i, chipState,
+      word, key, exists,
+      groups: groupsAfter,
+      highlightKey: key,
+      lines: [
+        `word = "${word}"`,
+        `key = ''.join(sorted("${word}"))  →  "${key}"`,
+        exists
+          ? `key "${key}" in groups  →  True  →  skip creation`
+          : `key "${key}" not in groups  →  groups["${key}"] = []`,
+        `groups["${key}"].append("${word}")`
+      ],
+      decision: exists
+        ? `"${key}" already exists. Append "${word}" to groups["${key}"].`
+        : `"${key}" is new. Create groups["${key}"] = [] then append "${word}".`
+    });
+  }
+
+  const finalChip = words.map(() => 'done');
+  steps.push({
+    title: "Done",
+    wordIdx: null, chipState: finalChip,
+    word: null, key: null, exists: null,
+    groups: JSON.parse(JSON.stringify(groups)),
+    highlightKey: null,
+    lines: ["print(list(groups.values()))"],
+    decision: "All words processed. Print the grouped anagram lists."
+  });
+
+  return steps;
+}
+
+const steps = buildSteps();
+let step = 0;
+
+function render() {
+  const s = steps[step];
+  const isLast = step === steps.length - 1;
+
+  const wv = document.getElementById('words-viz');
+  wv.innerHTML = '';
+  words.forEach((w, i) => {
+    const d = document.createElement('div');
+    d.className = 'word-chip ' + (s.chipState[i] || 'idle');
+    d.textContent = w;
+    wv.appendChild(d);
+  });
+
+  document.getElementById('step-title').textContent = s.title;
+  document.getElementById('code-lines').innerHTML = s.lines.map(l =>
+    `<div class="code-line active">${l}</div>`).join('');
+
+  document.getElementById('sv-word').textContent   = s.word   !== null ? `"${s.word}"` : '—';
+  document.getElementById('sv-key').textContent    = s.key    !== null ? `"${s.key}"`  : '—';
+  document.getElementById('sv-exists').textContent = s.exists !== null ? String(s.exists) : '—';
+
+  const gv = document.getElementById('groups-viz');
+  gv.innerHTML = '';
+  if (Object.keys(s.groups).length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'font-size:12px;color:var(--text3);font-family:var(--font-mono);';
+    empty.textContent = '{}';
+    gv.appendChild(empty);
+  } else {
+    Object.entries(s.groups).forEach(([k, v]) => {
+      const card = document.createElement('div');
+      card.className = 'group-card' + (k === s.highlightKey ? ' highlight' : '');
+      card.innerHTML = `<div class="group-key">"${k}"</div><div class="group-words">${v.map(w => '"'+w+'"').join('<br>')}</div>`;
+      gv.appendChild(card);
+    });
+  }
+
+  document.getElementById('decision-box').textContent = s.decision;
+  document.getElementById('prev-btn').disabled = step === 0;
+  document.getElementById('next-btn').disabled = isLast;
+  document.getElementById('step-count').textContent = `Step ${step+1} / ${steps.length}`;
+
+  const rb = document.getElementById('result-banner');
+  if (isLast) {
+    const out = Object.values(s.groups).map(v => '[' + v.map(w => '"'+w+'"').join(', ') + ']').join(',  ');
+    rb.innerHTML = `✓ Output:<br>[${out}]`;
+    rb.style.display = 'block';
+  } else {
+    rb.style.display = 'none';
+  }
+}
+
+function move(d) {
+  step = Math.max(0, Math.min(steps.length - 1, step + d));
+  render();
+}
+
+function copyCode() {
+  const raw = `words = ["eat","tea","tan","ate","nat","bat"]
+groups = {}
+for word in words:
+    key = ''.join(sorted(word))
+    if key not in groups:
+        groups[key] = []
+    groups[key].append(word)
+print(list(groups.values()))`;
+  navigator.clipboard.writeText(raw).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

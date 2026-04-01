@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palindrome List — Dry Run</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f4f0; --bg3: #eceae3;
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #8a8880;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --font-mono: 'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+    --font-sans: 'Inter','Segoe UI',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --bg2: #242420; --bg3: #2e2e2a;
+      --text: #e8e6df; --text2: #9c9a92; --text3: #6a6862;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+    }
+  }
+  body { font-family: var(--font-sans); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px; }
+  .wrap { width: 100%; max-width: 700px; }
+
+  /* CODE CARD */
+  .code-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
+  .code-card-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); font-family: var(--font-mono); }
+  .lang-badge { background: #534AB7; color: #EEEDFE; padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+  .copy-btn { cursor: pointer; background: none; border: 1px solid var(--border2); color: var(--text2); font-size: 11px; padding: 3px 10px; border-radius: 6px; font-family: var(--font-mono); transition: all .15s; }
+  .copy-btn:hover { background: var(--bg2); color: var(--text); }
+  pre { margin: 0; padding: 18px 20px; background: var(--bg); font-family: var(--font-mono); font-size: 12.5px; line-height: 1.85; color: var(--text2); overflow-x: auto; white-space: pre; }
+  .kw { color: #7F77DD; } .fn { color: #1D9E75; } .cm { color: var(--text3); font-style: italic; } .nm { color: #EF9F27; } .st { color: #D85A30; }
+  @media (prefers-color-scheme: dark) { .kw{color:#AFA9EC} .fn{color:#5DCAA5} .nm{color:#FAC775} .st{color:#F0997B} }
+
+  /* DRY RUN CARD */
+  .dry-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+  h2 { font-size: 17px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .subtitle { font-size: 12px; color: var(--text3); margin-bottom: 22px; font-family: var(--font-mono); }
+
+  /* LEGEND */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); font-family: var(--font-mono); }
+  .legend-box { width: 13px; height: 13px; border-radius: 3px; border: 1.5px solid; }
+
+  /* ARRAY VIZ */
+  .arr-label { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 8px; }
+  .arr-wrap { display: flex; justify-content: center; margin-bottom: 6px; }
+  .arr-row { display: flex; gap: 10px; }
+  .idx-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 6px; }
+  .ptr-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 22px; min-height: 22px; }
+
+  .cell {
+    width: 58px; height: 54px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 600; border: 1.5px solid var(--border);
+    background: var(--bg3); color: var(--text); transition: all .35s; font-family: var(--font-mono);
+  }
+  .idx-cell { width: 58px; text-align: center; font-size: 11px; color: var(--text3); font-family: var(--font-mono); }
+  .ptr-cell { width: 58px; text-align: center; font-size: 11px; font-family: var(--font-mono); min-height: 18px; }
+
+  .cell.left   { border-color: #7F77DD; background: #EEEDFE; color: #26215C; }
+  .cell.right  { border-color: #1D9E75; background: #E1F5EE; color: #085041; }
+  .cell.both   { border-color: #EF9F27; background: #FAC775; color: #412402; }
+  .cell.match  { border-color: #1D9E75; background: #E1F5EE; color: #085041; }
+  .cell.mismatch { border-color: #D85A30; background: #FAECE7; color: #4A1B0C; }
+  .cell.done   { border-color: var(--border); background: var(--bg); color: var(--text3); opacity: 0.45; }
+
+  .ptr-left  { color: #534AB7; font-weight: 600; }
+  .ptr-right { color: #0F6E56; font-weight: 600; }
+  .ptr-both  { color: #BA7517; font-weight: 600; }
+
+  @media (prefers-color-scheme: dark) {
+    .cell.left  { background: #26215C; color: #CECBF6; border-color: #7F77DD; }
+    .cell.right { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .cell.both  { background: #633806; color: #FAC775; border-color: #EF9F27; }
+    .cell.match { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .cell.mismatch { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+  }
+
+  /* COMPARISON BADGE */
+  .cmp-badge { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 18px; font-family: var(--font-mono); font-size: 13px; min-height: 32px; }
+  .cmp-val { padding: 5px 16px; border-radius: 8px; font-weight: 600; font-size: 15px; }
+  .cmp-eq  { background: #E1F5EE; color: #085041; border: 1.5px solid #1D9E75; }
+  .cmp-neq { background: #FAECE7; color: #4A1B0C; border: 1.5px solid #D85A30; }
+  .cmp-op  { color: var(--text3); font-size: 12px; }
+  @media (prefers-color-scheme: dark) {
+    .cmp-eq  { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .cmp-neq { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+  }
+
+  /* STEP PANEL */
+  .step-panel { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .step-header { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+  .code-line { font-size: 12px; color: var(--text2); line-height: 1.95; padding: 2px 10px; border-radius: 5px; font-family: var(--font-mono); }
+  .code-line.active { background: #EEEDFE; color: #26215C; }
+  @media (prefers-color-scheme: dark) { .code-line.active { background: #26215C; color: #CECBF6; } }
+
+  /* STATE BOXES */
+  .state-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .state-box { flex: 1; min-width: 110px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .state-lbl { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .state-val { font-size: 13px; font-family: var(--font-mono); color: var(--text); word-break: break-all; line-height: 1.65; min-height: 18px; font-weight: 600; }
+
+  .decision { font-size: 12px; margin-top: 12px; padding: 8px 12px; border-radius: 6px; border-left: 3px solid #7F77DD; background: var(--bg2); color: var(--text2); font-family: var(--font-mono); line-height: 1.6; }
+
+  /* NAV */
+  .nav { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 7px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); transition: all .15s; font-family: var(--font-sans); }
+  .btn:hover:not(:disabled) { background: var(--bg2); border-color: #7F77DD; }
+  .btn:disabled { opacity: .35; cursor: default; }
+  .step-count { font-size: 12px; color: var(--text3); margin: 0 6px; font-family: var(--font-mono); }
+
+  .result-banner { margin-top: 14px; padding: 12px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: var(--font-mono); line-height: 1.8; }
+  .result-banner.yes { background: #E1F5EE; color: #085041; border: 1px solid #5DCAA5; }
+  .result-banner.no  { background: #FAECE7; color: #4A1B0C; border: 1px solid #D85A30; }
+  @media (prefers-color-scheme: dark) {
+    .result-banner.yes { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .result-banner.no  { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- PYTHON SOURCE -->
+  <div class="code-card">
+    <div class="code-card-header">
+      <span>palindrome_list.py</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="lang-badge">Python</span>
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <pre>L = [<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>, <span class="nm">20</span>, <span class="nm">10</span>]
+
+left_idx  = <span class="nm">0</span>
+right_idx = <span class="fn">len</span>(L) - <span class="nm">1</span>
+
+<span class="kw">while</span> left_idx &lt; right_idx:
+
+    <span class="kw">if</span> L[left_idx] != L[right_idx]:
+        <span class="fn">print</span>(<span class="st">"List is not palindrome"</span>)
+        <span class="kw">break</span>
+
+    left_idx  += <span class="nm">1</span>
+    right_idx -= <span class="nm">1</span>
+
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"List is palindrome"</span>)</pre>
+  </div>
+
+  <!-- DRY RUN -->
+  <div class="dry-card">
+    <h2>Palindrome List — Dry Run</h2>
+    <div class="subtitle">L = [10, 20, 30, 20, 10]</div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-box" style="background:#EEEDFE;border-color:#7F77DD"></div>left_idx</div>
+      <div class="legend-item"><div class="legend-box" style="background:#E1F5EE;border-color:#1D9E75"></div>right_idx</div>
+      <div class="legend-item"><div class="legend-box" style="background:#FAC775;border-color:#EF9F27"></div>left == right (met)</div>
+      <div class="legend-item"><div class="legend-box" style="background:#FAECE7;border-color:#D85A30"></div>mismatch</div>
+    </div>
+
+    <div class="arr-label">L</div>
+    <div class="arr-wrap"><div class="arr-row" id="arr-viz"></div></div>
+    <div class="idx-row" id="idx-viz"></div>
+    <div class="ptr-row" id="ptr-viz"></div>
+
+    <div class="cmp-badge" id="cmp-badge"></div>
+
+    <div class="step-panel">
+      <div class="step-header" id="step-title">Step</div>
+      <div id="code-lines"></div>
+      <div class="state-row" id="state-row"></div>
+      <div class="decision" id="decision-box"></div>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="prev-btn" onclick="move(-1)" disabled>← Prev</button>
+      <span class="step-count" id="step-count"></span>
+      <button class="btn" id="next-btn" onclick="move(1)">Next →</button>
+    </div>
+    <div id="result-banner" style="display:none" class="result-banner"></div>
+  </div>
+</div>
+
+<script>
+const L = [10, 20, 30, 20, 10];
+
+function buildSteps() {
+  const steps = [];
+  let li = 0, ri = L.length - 1;
+
+  steps.push({
+    title: "Init",
+    li: 0, ri: L.length - 1,
+    phase: "init",
+    cmp: null,
+    lines: [
+      `L = [${L.join(', ')}]`,
+      `left_idx  = 0`,
+      `right_idx = len(L) - 1  →  ${L.length - 1}`
+    ],
+    stateItems: [
+      { lbl: 'left_idx',  val: '0' },
+      { lbl: 'right_idx', val: String(L.length - 1) },
+      { lbl: 'L[left]',   val: String(L[0]) },
+      { lbl: 'L[right]',  val: String(L[L.length - 1]) }
+    ],
+    decision: `Initialize pointers. left_idx=0 at ${L[0]}, right_idx=${L.length-1} at ${L[L.length-1]}. Start while loop.`
+  });
+
+  let iter = 1;
+  while (li < ri) {
+    const lv = L[li], rv = L[ri];
+    const match = lv === rv;
+
+    steps.push({
+      title: `Iteration ${iter}  —  while ${li} < ${ri}  ✓`,
+      li, ri,
+      phase: match ? "match" : "mismatch",
+      cmp: { lv, rv, match },
+      lines: [
+        `while left_idx(${li}) < right_idx(${ri})  →  True`,
+        `L[${li}] = ${lv},  L[${ri}] = ${rv}`,
+        match
+          ? `${lv} != ${rv}  →  False  →  no break`
+          : `${lv} != ${rv}  →  True  →  print("not palindrome"), break`
+      ],
+      stateItems: [
+        { lbl: 'left_idx',  val: String(li) },
+        { lbl: 'right_idx', val: String(ri) },
+        { lbl: 'L[left]',   val: String(lv) },
+        { lbl: 'L[right]',  val: String(rv) }
+      ],
+      decision: match
+        ? `L[${li}]=${lv} == L[${ri}]=${rv} ✓ Match! Advance pointers: left_idx → ${li+1}, right_idx → ${ri-1}.`
+        : `L[${li}]=${lv} ≠ L[${ri}]=${rv}. Mismatch! Print "not palindrome" and break.`
+    });
+
+    if (!match) {
+      steps.push({
+        title: "Break — mismatch detected",
+        li, ri,
+        phase: "mismatch",
+        cmp: { lv, rv, match: false },
+        lines: [`print("List is not palindrome")`, `break`],
+        stateItems: [
+          { lbl: 'left_idx',  val: String(li) },
+          { lbl: 'right_idx', val: String(ri) },
+          { lbl: 'result',    val: '"not palindrome"' }
+        ],
+        decision: `while...else: break was hit, so the else block is SKIPPED. Output: "List is not palindrome".`
+      });
+      return steps;
+    }
+
+    li++; ri--;
+
+    if (li < ri) {
+      steps.push({
+        title: `Move pointers  →  left_idx=${li}, right_idx=${ri}`,
+        li, ri,
+        phase: "advance",
+        cmp: null,
+        lines: [`left_idx  += 1  →  ${li}`, `right_idx -= 1  →  ${ri}`],
+        stateItems: [
+          { lbl: 'left_idx',  val: String(li) },
+          { lbl: 'right_idx', val: String(ri) },
+          { lbl: 'L[left]',   val: String(L[li]) },
+          { lbl: 'L[right]',  val: String(L[ri]) }
+        ],
+        decision: `Pointers moved inward. Next compare: L[${li}]=${L[li]} vs L[${ri}]=${L[ri]}.`
+      });
+    } else {
+      steps.push({
+        title: `Move pointers  →  left_idx=${li}, right_idx=${ri}`,
+        li, ri,
+        phase: "crossed",
+        cmp: null,
+        lines: [`left_idx  += 1  →  ${li}`, `right_idx -= 1  →  ${ri}`],
+        stateItems: [
+          { lbl: 'left_idx',  val: String(li) },
+          { lbl: 'right_idx', val: String(ri) }
+        ],
+        decision: `left_idx(${li}) >= right_idx(${ri}). Pointers have crossed — while loop exits normally (no break).`
+      });
+    }
+    iter++;
+  }
+
+  steps.push({
+    title: `while ${li} < ${ri}  →  False  —  loop exits`,
+    li, ri,
+    phase: "done",
+    cmp: null,
+    lines: [
+      `while left_idx(${li}) < right_idx(${ri})  →  False`,
+      `else:  print("List is palindrome")`
+    ],
+    stateItems: [
+      { lbl: 'left_idx',  val: String(li) },
+      { lbl: 'right_idx', val: String(ri) },
+      { lbl: 'result',    val: '"palindrome"' }
+    ],
+    decision: `No break was hit. The while...else fires. Output: "List is palindrome".`
+  });
+
+  return steps;
+}
+
+const steps = buildSteps();
+let step = 0;
+
+function getCellStates(s) {
+  return L.map((_, i) => {
+    if (s.phase === "done" || s.phase === "crossed") return "match";
+    if (s.phase === "mismatch" || s.phase === "Break — mismatch") {
+      if (i === s.li || i === s.ri) return "mismatch";
+      return "done";
+    }
+    if (i === s.li && i === s.ri) return "both";
+    if (i === s.li) return "left";
+    if (i === s.ri) return "right";
+    if (i < s.li || i > s.ri) return "done";
+    return "idle";
+  });
+}
+
+function render() {
+  const s = steps[step];
+  const isLast = step === steps.length - 1;
+  const cellStates = getCellStates(s);
+
+  const av = document.getElementById('arr-viz');
+  const iv = document.getElementById('idx-viz');
+  const pv = document.getElementById('ptr-viz');
+  av.innerHTML = ''; iv.innerHTML = ''; pv.innerHTML = '';
+
+  L.forEach((val, i) => {
+    const d = document.createElement('div');
+    d.className = 'cell ' + (cellStates[i] || 'idle');
+    d.textContent = val;
+    av.appendChild(d);
+
+    const ic = document.createElement('div');
+    ic.className = 'idx-cell';
+    ic.textContent = i;
+    iv.appendChild(ic);
+
+    const pc = document.createElement('div');
+    pc.className = 'ptr-cell';
+    const isL = i === s.li && s.li < s.ri;
+    const isR = i === s.ri && s.li < s.ri;
+    const isBoth = i === s.li && i === s.ri;
+    if (isBoth) pc.innerHTML = `<span class="ptr-both">L&R</span>`;
+    else if (isL) pc.innerHTML = `<span class="ptr-left">▲ L</span>`;
+    else if (isR) pc.innerHTML = `<span class="ptr-right">▲ R</span>`;
+    pv.appendChild(pc);
+  });
+
+  const cb = document.getElementById('cmp-badge');
+  if (s.cmp) {
+    const cls = s.cmp.match ? 'cmp-eq' : 'cmp-neq';
+    const op  = s.cmp.match ? '==' : '!=';
+    const sym = s.cmp.match ? '✓' : '✗';
+    cb.innerHTML = `
+      <span class="cmp-val ${cls}">${s.cmp.lv}</span>
+      <span class="cmp-op">${op}</span>
+      <span class="cmp-val ${cls}">${s.cmp.rv}</span>
+      <span class="cmp-op">${sym} ${s.cmp.match ? 'match' : 'mismatch'}</span>`;
+  } else {
+    cb.innerHTML = '';
+  }
+
+  document.getElementById('step-title').textContent = s.title;
+  document.getElementById('code-lines').innerHTML = s.lines.map(l =>
+    `<div class="code-line active">${l}</div>`).join('');
+
+  document.getElementById('state-row').innerHTML = (s.stateItems || []).map(item =>
+    `<div class="state-box"><div class="state-lbl">${item.lbl}</div><div class="state-val">${item.val}</div></div>`
+  ).join('');
+
+  document.getElementById('decision-box').textContent = s.decision;
+  document.getElementById('prev-btn').disabled = step === 0;
+  document.getElementById('next-btn').disabled = isLast;
+  document.getElementById('step-count').textContent = `Step ${step+1} / ${steps.length}`;
+
+  const rb = document.getElementById('result-banner');
+  if (isLast) {
+    const isPalin = s.phase === 'done';
+    rb.className = 'result-banner ' + (isPalin ? 'yes' : 'no');
+    rb.innerHTML = isPalin
+      ? `✓ [${L.join(', ')}] is a palindrome`
+      : `✗ [${L.join(', ')}] is NOT a palindrome`;
+    rb.style.display = 'block';
+  } else {
+    rb.style.display = 'none';
+  }
+}
+
+function move(d) {
+  step = Math.max(0, Math.min(steps.length - 1, step + d));
+  render();
+}
+
+function copyCode() {
+  const raw = `L = [10, 20, 30, 20, 10]
+
+left_idx = 0
+right_idx = len(L) - 1
+
+while left_idx < right_idx:
+
+    if L[left_idx] != L[right_idx]:
+        print("List is not palindrome")
+        break
+
+    left_idx += 1
+    right_idx -= 1
+
+else:
+    print("List is palindrome")`;
+  navigator.clipboard.writeText(raw).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

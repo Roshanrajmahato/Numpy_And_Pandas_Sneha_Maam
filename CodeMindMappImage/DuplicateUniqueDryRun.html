@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unique & Duplicate Elements — Dry Run</title>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 900px;
+}
+
+pre {
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.chip {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  font-weight: bold;
+}
+
+.current {
+  background: #e8e6ff;
+  border-color: #6c63ff;
+}
+
+.done {
+  background: #dff5e7;
+  border-color: #1c9e63;
+}
+
+.unique {
+  background: #d4f3ff;
+  border-color: #2f9ed1;
+}
+
+.duplicate {
+  background: #ffe1d4;
+  border-color: #e06c2f;
+}
+
+.box {
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 10px;
+  flex: 1;
+}
+
+.title {
+  font-size: 12px;
+  color: gray;
+  margin-bottom: 6px;
+}
+.title-main{
+font-size:22px;
+font-weight:bold;
+margin-bottom:18px;
+text-align:center;
+}
+
+.decision {
+  margin-top: 14px;
+  background: #f2f2f2;
+  padding: 10px;
+  border-left: 4px solid #6c63ff;
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+.nav {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+button {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid #999;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .4;
+}
+
+.result {
+  margin-top: 16px;
+  background: #dff5e7;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #1c9e63;
+  font-family: monospace;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+<div class="title-main">
+Unique and Duplicate Elements — Interactive Dry Run
+</div>
+<pre>
+l = [10, 20, 10, 30, 20, 10]
+
+c1 = []
+c2 = []
+
+for ele in l:
+    if ele not in c1:
+        c1.append(ele)
+    else:
+        c2.append(ele)
+
+print(c1)
+print(c2)
+</pre>
+
+<div class="card">
+
+<div class="row" id="listViz"></div>
+
+<div class="row">
+
+<div class="box">
+<div class="title">Current Element</div>
+<div id="curEle">—</div>
+</div>
+
+<div class="box">
+<div class="title">Unique List (c1)</div>
+<div id="c1Box">[]</div>
+</div>
+
+<div class="box">
+<div class="title">Duplicate List (c2)</div>
+<div id="c2Box">[]</div>
+</div>
+
+</div>
+
+<div class="decision" id="decisionBox"></div>
+
+<div class="nav">
+
+<button onclick="move(-1)" id="prevBtn">Prev</button>
+
+<span id="stepCount"></span>
+
+<button onclick="move(1)" id="nextBtn">Next</button>
+
+</div>
+
+<div id="resultBox" class="result" style="display:none"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const arr = [10,20,10,30,20,10];
+
+function buildSteps(){
+
+let steps=[];
+let c1=[];
+let c2=[];
+
+steps.push({
+ele:null,
+c1:[],
+c2:[],
+state:arr.map(()=> 'idle'),
+decision:"Initialize empty lists c1 and c2."
+});
+
+for(let i=0;i<arr.length;i++){
+
+let ele=arr[i];
+
+let exists=c1.includes(ele);
+
+let state=arr.map((_,j)=>{
+
+if(j<i) return 'done';
+
+if(j===i) return exists?'duplicate':'unique';
+
+return 'idle';
+
+});
+
+if(!exists){
+
+c1.push(ele);
+
+steps.push({
+ele,
+c1:[...c1],
+c2:[...c2],
+state,
+decision:`${ele} not in c1 → append to c1`
+});
+
+}
+else{
+
+c2.push(ele);
+
+steps.push({
+ele,
+c1:[...c1],
+c2:[...c2],
+state,
+decision:`${ele} already in c1 → append to c2`
+});
+
+}
+
+}
+
+steps.push({
+ele:null,
+c1:[...c1],
+c2:[...c2],
+state:arr.map(()=> 'done'),
+decision:"All elements processed."
+});
+
+return steps;
+
+}
+
+const steps=buildSteps();
+
+let step=0;
+
+function render(){
+
+const s=steps[step];
+
+const viz=document.getElementById("listViz");
+
+viz.innerHTML="";
+
+arr.forEach((n,i)=>{
+
+let d=document.createElement("div");
+
+d.className="chip "+(s.state[i]||"");
+
+d.textContent=n;
+
+viz.appendChild(d);
+
+});
+
+document.getElementById("curEle").textContent=
+s.ele!==null?s.ele:"—";
+
+document.getElementById("c1Box").textContent=
+JSON.stringify(s.c1);
+
+document.getElementById("c2Box").textContent=
+JSON.stringify(s.c2);
+
+document.getElementById("decisionBox").textContent=
+s.decision;
+
+document.getElementById("stepCount").textContent=
+`Step ${step+1} / ${steps.length}`;
+
+document.getElementById("prevBtn").disabled=
+step===0;
+
+document.getElementById("nextBtn").disabled=
+step===steps.length-1;
+
+if(step===steps.length-1){
+
+document.getElementById("resultBox").style.display="block";
+
+document.getElementById("resultBox").innerHTML=
+`Unique Elements: ${JSON.stringify(s.c1)}
+<br>Duplicate Elements: ${JSON.stringify(s.c2)}`;
+
+}
+else{
+
+document.getElementById("resultBox").style.display="none";
+
+}
+
+}
+
+function move(d){
+
+step=Math.max(0,
+Math.min(steps.length-1,step+d));
+
+render();
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>

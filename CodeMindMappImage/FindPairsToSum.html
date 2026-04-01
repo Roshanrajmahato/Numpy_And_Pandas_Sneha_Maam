@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Find Pair Sum — Dry Run</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+font-family:system-ui;
+background:#ffffff;
+display:flex;
+justify-content:center;
+padding:40px;
+}
+
+.card{
+
+width:650px;
+
+background:#f5f4f0;
+
+border-radius:16px;
+
+padding:26px;
+
+border:1px solid #ccc;
+
+}
+
+h2{
+margin-bottom:4px;
+}
+
+.subtitle{
+
+font-size:12px;
+color:#777;
+margin-bottom:20px;
+
+}
+
+pre{
+
+background:white;
+
+padding:16px;
+
+border-radius:10px;
+
+border:1px solid #ccc;
+
+margin-bottom:20px;
+
+font-size:13px;
+
+}
+
+.step-panel{
+
+background:white;
+
+padding:16px;
+
+border-radius:10px;
+
+border:1px solid #ccc;
+
+margin-bottom:16px;
+
+}
+
+.var-chip{
+
+display:inline-block;
+
+margin:4px;
+
+padding:4px 10px;
+
+border-radius:20px;
+
+border:1px solid #ccc;
+
+font-size:12px;
+
+}
+
+.decision{
+
+margin-top:12px;
+
+padding:8px;
+
+background:#f5f4f0;
+
+border-left:4px solid #7F77DD;
+
+font-size:12px;
+
+}
+
+.nav{
+
+display:flex;
+
+gap:10px;
+
+align-items:center;
+
+}
+
+button{
+
+padding:6px 14px;
+
+cursor:pointer;
+
+border-radius:8px;
+
+border:1px solid #aaa;
+
+background:#eceae3;
+
+}
+
+.step-count{
+
+font-size:12px;
+
+color:#777;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Find Pair Sum — Dry Run</h2>
+
+<div class="subtitle">
+target = 6
+</div>
+
+<h3>Python Code</h3>
+
+<pre>
+
+l1 = [2, 3, 1, 4, 2, 5, 6, 7, 1, 2, 4, 8, 1, 4, 5]
+
+target = int(input("Enter a value: "))
+
+seen = set()
+res = []
+
+for num in l1:
+
+    complement = target - num
+
+    if complement in seen:
+        res.append((complement, num))
+
+    seen.add(num)
+
+print(res)
+
+</pre>
+
+<div class="step-panel">
+
+<div id="step-title"></div>
+
+<div id="vars-row"></div>
+
+<div class="decision" id="decision-box"></div>
+
+</div>
+
+<div class="nav">
+
+<button onclick="move(-1)">← Prev</button>
+
+<span id="step-count"></span>
+
+<button onclick="move(1)">Next →</button>
+
+</div>
+
+</div>
+
+<script>
+
+const steps=[
+
+{
+title:"Start",
+vars:{seen:"{}",res:"[]",num:2},
+decision:"First element = 2"
+},
+
+{
+title:"Step",
+vars:{complement:4,seen:"{2}",res:"[]"},
+decision:"4 not in seen → add 2"
+},
+
+{
+title:"Step",
+vars:{num:3,complement:3,seen:"{2,3}",res:"[]"},
+decision:"3 not in seen → add 3"
+},
+
+{
+title:"Step",
+vars:{num:1,complement:5,seen:"{2,3,1}",res:"[]"},
+decision:"5 not in seen"
+},
+
+{
+title:"Step",
+vars:{num:4,complement:2,seen:"{2,3,1,4}",res:"[(2,4)]"},
+decision:"2 found → pair added"
+},
+
+{
+title:"Step",
+vars:{num:2,complement:4,seen:"{2,3,1,4}",res:"[(2,4),(4,2)]"},
+decision:"4 found → pair added"
+},
+
+{
+title:"Step",
+vars:{num:5,complement:1,res:"[(2,4),(4,2),(1,5)]"},
+decision:"1 found → pair added"
+},
+
+{
+title:"Step",
+vars:{num:6,complement:0},
+decision:"0 not found"
+},
+
+{
+title:"End",
+vars:{res:"[(2,4),(4,2),(1,5)]"},
+decision:"Final result printed"
+}
+
+];
+
+let step=0;
+
+function render(){
+
+let s=steps[step];
+
+document.getElementById("step-title").textContent=s.title;
+
+document.getElementById("vars-row").innerHTML=
+Object.entries(s.vars)
+.map(([k,v])=>`<span class="var-chip">${k}=${v}</span>`)
+.join("");
+
+document.getElementById("decision-box").textContent=s.decision;
+
+document.getElementById("step-count").textContent=
+`Step ${step+1}/${steps.length}`;
+
+}
+
+function move(d){
+
+step=Math.max(
+0,
+Math.min(steps.length-1,step+d)
+);
+
+render();
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>

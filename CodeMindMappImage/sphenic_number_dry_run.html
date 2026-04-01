@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sphenic Number — Dry Run</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f4f0; --bg3: #eceae3;
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #8a8880;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --font-mono: 'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+    --font-sans: 'Inter','Segoe UI',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --bg2: #242420; --bg3: #2e2e2a;
+      --text: #e8e6df; --text2: #9c9a92; --text3: #6a6862;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+    }
+  }
+  body { font-family: var(--font-sans); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px; }
+  .wrap { width: 100%; max-width: 740px; }
+
+  /* CODE CARD */
+  .code-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
+  .code-card-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); font-family: var(--font-mono); }
+  .lang-badge { background: #534AB7; color: #EEEDFE; padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+  .copy-btn { cursor: pointer; background: none; border: 1px solid var(--border2); color: var(--text2); font-size: 11px; padding: 3px 10px; border-radius: 6px; font-family: var(--font-mono); transition: all .15s; }
+  .copy-btn:hover { background: var(--bg2); color: var(--text); }
+  pre { margin: 0; padding: 18px 20px; background: var(--bg); font-family: var(--font-mono); font-size: 12.5px; line-height: 1.85; color: var(--text2); overflow-x: auto; white-space: pre; }
+  .kw { color: #7F77DD; } .fn { color: #1D9E75; } .cm { color: var(--text3); font-style: italic; } .nm { color: #EF9F27; } .st { color: #D85A30; }
+  @media (prefers-color-scheme: dark) { .kw{color:#AFA9EC} .fn{color:#5DCAA5} .nm{color:#FAC775} .st{color:#F0997B} }
+
+  /* DRY RUN CARD */
+  .dry-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+  h2 { font-size: 17px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .subtitle { font-size: 12px; color: var(--text3); margin-bottom: 22px; font-family: var(--font-mono); }
+
+  /* PHASE TABS */
+  .phase-tabs { display: flex; gap: 6px; margin-bottom: 22px; flex-wrap: wrap; }
+  .phase-tab { padding: 5px 15px; border-radius: 20px; font-size: 12px; font-family: var(--font-mono); border: 1px solid var(--border); background: var(--bg3); color: var(--text2); cursor: pointer; transition: all .2s; }
+  .phase-tab.active { background: #534AB7; color: #EEEDFE; border-color: #534AB7; }
+  @media (prefers-color-scheme: dark) { .phase-tab.active { background: #3C3489; color: #CECBF6; border-color: #534AB7; } }
+
+  /* LEGEND */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); font-family: var(--font-mono); }
+  .legend-box { width: 13px; height: 13px; border-radius: 3px; border: 1.5px solid; }
+
+  /* NUMBER LINE */
+  .numline-label { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 7px; }
+  .numline-scroll { overflow-x: auto; padding-bottom: 6px; margin-bottom: 20px; }
+  .numline-row { display: flex; gap: 4px; min-width: max-content; }
+  .nidx-row { display: flex; gap: 4px; min-width: max-content; margin-top: 4px; }
+  .ncell {
+    width: 38px; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; border: 1.5px solid var(--border);
+    background: var(--bg3); color: var(--text); transition: all .3s; font-family: var(--font-mono); flex-shrink: 0;
+  }
+  .nidx-cell { width: 38px; text-align: center; font-size: 10px; color: var(--text3); font-family: var(--font-mono); flex-shrink: 0; }
+  .ncell.current   { border-color: #7F77DD; background: #EEEDFE; color: #26215C; }
+  .ncell.prime-fac { border-color: #1D9E75; background: #E1F5EE; color: #085041; }
+  .ncell.not-fac   { border-color: var(--border); background: var(--bg); color: var(--text3); opacity: 0.5; }
+  .ncell.skipped   { border-color: #D85A30; background: #FAECE7; color: #4A1B0C; }
+  .ncell.answer    { border-color: #EF9F27; background: #FAC775; color: #412402; }
+  @media (prefers-color-scheme: dark) {
+    .ncell.current   { background: #26215C; color: #CECBF6; }
+    .ncell.prime-fac { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .ncell.not-fac   { background: var(--bg); color: var(--text3); }
+    .ncell.skipped   { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+    .ncell.answer    { background: #633806; color: #FAC775; border-color: #EF9F27; }
+  }
+
+  /* IS_PRIME MINI TRACE */
+  .prime-trace { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; }
+  .prime-trace-title { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .prime-row { display: flex; gap: 5px; flex-wrap: wrap; }
+  .prime-chip {
+    padding: 4px 10px; border-radius: 6px; font-size: 11px; font-family: var(--font-mono);
+    border: 1px solid var(--border); background: var(--bg3); color: var(--text2); transition: all .2s;
+  }
+  .prime-chip.checking { border-color: #7F77DD; background: #EEEDFE; color: #3C3489; }
+  .prime-chip.divides  { border-color: #D85A30; background: #FAECE7; color: #712B13; }
+  .prime-chip.no-div   { border-color: #1D9E75; background: #E1F5EE; color: #085041; }
+  @media (prefers-color-scheme: dark) {
+    .prime-chip.checking { background: #26215C; color: #CECBF6; }
+    .prime-chip.divides  { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+    .prime-chip.no-div   { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+  }
+
+  /* STEP PANEL */
+  .step-panel { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .step-header { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+  .code-line { font-size: 12px; color: var(--text2); line-height: 1.95; padding: 2px 10px; border-radius: 5px; font-family: var(--font-mono); }
+  .code-line.active { background: #EEEDFE; color: #26215C; }
+  @media (prefers-color-scheme: dark) { .code-line.active { background: #26215C; color: #CECBF6; } }
+
+  /* STATE BOXES */
+  .state-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .state-box { flex: 1; min-width: 100px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .state-lbl { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .state-val { font-size: 12px; font-family: var(--font-mono); color: var(--text); word-break: break-all; line-height: 1.65; min-height: 18px; }
+
+  /* PRIMES COLLECTED */
+  .primes-area { margin-top: 14px; }
+  .primes-lbl { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .primes-chips { display: flex; gap: 6px; flex-wrap: wrap; min-height: 30px; align-items: center; }
+  .p-chip { padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; font-family: var(--font-mono); border: 1.5px solid #1D9E75; background: #E1F5EE; color: #085041; }
+  @media (prefers-color-scheme: dark) { .p-chip { background: #04342C; color: #9FE1CB; border-color: #0F6E56; } }
+  .p-chip.highlight { border-color: #EF9F27; background: #FAC775; color: #412402; }
+  @media (prefers-color-scheme: dark) { .p-chip.highlight { background: #633806; color: #FAC775; border-color: #EF9F27; } }
+
+  .decision { font-size: 12px; margin-top: 12px; padding: 8px 12px; border-radius: 6px; border-left: 3px solid #7F77DD; background: var(--bg2); color: var(--text2); font-family: var(--font-mono); line-height: 1.6; }
+
+  /* NAV */
+  .nav { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 7px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); transition: all .15s; font-family: var(--font-sans); }
+  .btn:hover:not(:disabled) { background: var(--bg2); border-color: #7F77DD; }
+  .btn:disabled { opacity: .35; cursor: default; }
+  .step-count { font-size: 12px; color: var(--text3); margin: 0 6px; font-family: var(--font-mono); }
+
+  .result-banner { margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; font-family: var(--font-mono); line-height: 1.8; }
+  .result-banner.yes { background: #E1F5EE; color: #085041; border: 1px solid #5DCAA5; }
+  .result-banner.no  { background: #FAECE7; color: #4A1B0C; border: 1px solid #D85A30; }
+  @media (prefers-color-scheme: dark) {
+    .result-banner.yes { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .result-banner.no  { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- PYTHON SOURCE -->
+  <div class="code-card">
+    <div class="code-card-header">
+      <span>sphenic_number.py</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="lang-badge">Python</span>
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <pre><span class="kw">def</span> <span class="fn">is_prime</span>(n):
+    <span class="kw">if</span> n &lt; <span class="nm">2</span>:
+        <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>, <span class="fn">int</span>(n**<span class="nm">0.5</span>)+<span class="nm">1</span>):
+        <span class="kw">if</span> n % i == <span class="nm">0</span>:
+            <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">return</span> <span class="kw">True</span>
+
+n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Enter number: "</span>))
+primes = []
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>, n):
+    <span class="kw">if</span> <span class="fn">is_prime</span>(i) <span class="kw">and</span> n % i == <span class="nm">0</span>:
+        primes.<span class="fn">append</span>(i)
+
+<span class="kw">if</span> <span class="fn">len</span>(primes) == <span class="nm">3</span> <span class="kw">and</span> primes[<span class="nm">0</span>]*primes[<span class="nm">1</span>]*primes[<span class="nm">2</span>] == n:
+    <span class="fn">print</span>(<span class="st">"Sphenic Number"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"Not Sphenic Number"</span>)</pre>
+  </div>
+
+  <!-- DRY RUN -->
+  <div class="dry-card">
+    <h2>Sphenic Number — Dry Run</h2>
+    <div class="subtitle" id="dry-subtitle">n = 30  (2 × 3 × 5 = 30)</div>
+
+    <div class="phase-tabs">
+      <div class="phase-tab active" id="tab0" onclick="switchPhase(0)">Phase 1 — collect prime factors</div>
+      <div class="phase-tab" id="tab1" onclick="switchPhase(1)">Phase 2 — check sphenic</div>
+    </div>
+
+    <div class="legend" id="legend-area"></div>
+
+    <div class="numline-label" id="numline-label">candidates i in range(2, n)</div>
+    <div class="numline-scroll">
+      <div class="numline-row" id="numline-viz"></div>
+      <div class="nidx-row"    id="nidx-viz"></div>
+    </div>
+
+    <div class="step-panel">
+      <div class="step-header" id="step-title">Step</div>
+      <div class="prime-trace" id="prime-trace-area" style="display:none">
+        <div class="prime-trace-title" id="prime-trace-title">is_prime( ) trace</div>
+        <div class="prime-row" id="prime-trace-chips"></div>
+      </div>
+      <div id="code-lines"></div>
+      <div class="state-row" id="state-row"></div>
+      <div class="primes-area">
+        <div class="primes-lbl">primes collected</div>
+        <div class="primes-chips" id="primes-chips"></div>
+      </div>
+      <div class="decision" id="decision-box"></div>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="prev-btn" onclick="move(-1)" disabled>← Prev</button>
+      <span class="step-count" id="step-count"></span>
+      <button class="btn" id="next-btn" onclick="move(1)">Next →</button>
+    </div>
+    <div id="result-banner" style="display:none" class="result-banner"></div>
+  </div>
+</div>
+
+<script>
+const N = 30;
+const CANDIDATES = Array.from({length: N - 2}, (_, i) => i + 2);
+
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let i = 2; i <= Math.floor(Math.sqrt(n)); i++) {
+    if (n % i === 0) return false;
+  }
+  return true;
+}
+
+function isPrimeSteps(n) {
+  const sqrtN = Math.floor(Math.sqrt(n));
+  const steps = [];
+  for (let i = 2; i <= sqrtN; i++) {
+    steps.push({ i, divides: n % i === 0 });
+  }
+  return steps;
+}
+
+function buildPhase1() {
+  const steps = [];
+  const primes = [];
+
+  steps.push({
+    title: "Init",
+    curI: null,
+    cellStates: CANDIDATES.map(() => 'idle'),
+    stateItems: [{ lbl: 'n', val: String(N) }, { lbl: 'primes', val: '[]' }],
+    primes: [],
+    highlightPrime: null,
+    primeTrace: null,
+    lines: [`n = ${N}`, `primes = []`, `for i in range(2, ${N}):`],
+    decision: `Start scanning i from 2 to ${N - 1}. For each i: check is_prime(i) AND ${N} % i == 0.`
+  });
+
+  for (let idx = 0; idx < CANDIDATES.length; idx++) {
+    const i = CANDIDATES[idx];
+    const prime = isPrime(i);
+    const divides = N % i === 0;
+    const qualifies = prime && divides;
+    const primeSteps = isPrimeSteps(i);
+    const sqrtI = Math.floor(Math.sqrt(i));
+
+    if (qualifies) primes.push(i);
+
+    const cellStates = CANDIDATES.map((_, j) => {
+      if (j < idx) return primes.slice(0, primes.length - (qualifies ? 1 : 0)).includes(CANDIDATES[j]) ? 'prime-fac' : 'not-fac';
+      if (j === idx) return qualifies ? 'prime-fac' : (prime ? 'skipped' : 'not-fac');
+      return 'idle';
+    });
+    if (qualifies) cellStates[idx] = 'prime-fac';
+
+    let decision = '';
+    if (!prime) decision = `${i} is NOT prime (fails is_prime check). Skip.`;
+    else if (!divides) decision = `${i} is prime but ${N} % ${i} = ${N % i} ≠ 0. Not a factor. Skip.`;
+    else decision = `${i} is prime AND ${N} % ${i} = 0. Append ${i} to primes.`;
+
+    steps.push({
+      title: `i = ${i}`,
+      curI: idx,
+      cellStates,
+      stateItems: [
+        { lbl: 'i', val: String(i) },
+        { lbl: `is_prime(${i})`, val: String(prime) },
+        { lbl: `${N} % ${i}`, val: String(N % i) },
+        { lbl: 'qualifies?', val: String(qualifies) }
+      ],
+      primes: [...primes],
+      highlightPrime: qualifies ? i : null,
+      primeTrace: { n: i, sqrtN: sqrtI, steps: primeSteps, result: prime },
+      lines: [
+        `i = ${i}`,
+        `is_prime(${i})  →  ${prime}`,
+        prime ? `${N} % ${i} = ${N % i}  →  divides: ${divides}` : `→ skip (not prime)`,
+        qualifies ? `primes.append(${i})` : `→ not appended`
+      ],
+      decision
+    });
+  }
+
+  const finalCells = CANDIDATES.map(v => primes.includes(v) ? 'prime-fac' : 'not-fac');
+  steps.push({
+    title: "Phase 1 complete",
+    curI: null,
+    cellStates: finalCells,
+    stateItems: [{ lbl: 'primes', val: JSON.stringify(primes) }],
+    primes: [...primes],
+    highlightPrime: null,
+    primeTrace: null,
+    lines: [`primes = ${JSON.stringify(primes)}`, `→ moving to Phase 2`],
+    decision: `All candidates checked. Collected prime factors: ${JSON.stringify(primes)}. Now check sphenic condition.`
+  });
+
+  return steps;
+}
+
+function buildPhase2(primes) {
+  const steps = [];
+  const isSphenic = primes.length === 3 && primes[0] * primes[1] * primes[2] === N;
+  const finalCells = CANDIDATES.map(v => primes.includes(v) ? 'answer' : 'not-fac');
+
+  steps.push({
+    title: "Check: len(primes) == 3",
+    curI: null,
+    cellStates: CANDIDATES.map(v => primes.includes(v) ? 'prime-fac' : 'not-fac'),
+    stateItems: [
+      { lbl: 'len(primes)', val: String(primes.length) },
+      { lbl: 'condition', val: `${primes.length} == 3  →  ${primes.length === 3}` }
+    ],
+    primes: [...primes],
+    highlightPrime: null,
+    primeTrace: null,
+    lines: [`len(primes) == 3  →  ${primes.length} == 3  →  ${primes.length === 3}`],
+    decision: primes.length === 3
+      ? `Exactly 3 prime factors found. Proceed to product check.`
+      : `len(primes) = ${primes.length} ≠ 3. Not Sphenic.`
+  });
+
+  if (primes.length === 3) {
+    const product = primes[0] * primes[1] * primes[2];
+    steps.push({
+      title: `Check: ${primes[0]} × ${primes[1]} × ${primes[2]} == ${N}`,
+      curI: null,
+      cellStates: finalCells,
+      stateItems: [
+        { lbl: `${primes[0]}×${primes[1]}×${primes[2]}`, val: String(product) },
+        { lbl: 'equals n?', val: `${product} == ${N}  →  ${product === N}` }
+      ],
+      primes: [...primes],
+      highlightPrime: null,
+      primeTrace: null,
+      lines: [
+        `primes[0]*primes[1]*primes[2]`,
+        `= ${primes[0]} × ${primes[1]} × ${primes[2]}  =  ${product}`,
+        `${product} == ${N}  →  ${product === N}`
+      ],
+      decision: product === N
+        ? `Product = ${product} = n = ${N}. Both conditions met!`
+        : `Product = ${product} ≠ ${N}. Not Sphenic.`
+    });
+  }
+
+  steps.push({
+    title: "Verdict",
+    curI: null,
+    cellStates: isSphenic ? finalCells : CANDIDATES.map(v => primes.includes(v) ? 'skipped' : 'not-fac'),
+    stateItems: [{ lbl: 'result', val: isSphenic ? '"Sphenic Number"' : '"Not Sphenic Number"' }],
+    primes: [...primes],
+    highlightPrime: null,
+    primeTrace: null,
+    lines: [isSphenic ? `print("Sphenic Number")` : `print("Not Sphenic Number")`],
+    decision: isSphenic
+      ? `${N} = ${primes.join(' × ')} — exactly 3 distinct prime factors. Sphenic!`
+      : `Conditions not fully met. Not a Sphenic number.`
+  });
+
+  return steps;
+}
+
+const primesFinal = CANDIDATES.filter(i => isPrime(i) && N % i === 0);
+const phase1Steps = buildPhase1();
+const phase2Steps = buildPhase2(primesFinal);
+
+let phase = 0;
+let step = 0;
+
+function currentSteps() { return phase === 0 ? phase1Steps : phase2Steps; }
+
+const LEGENDS = {
+  0: [
+    { bg:'#EEEDFE', bc:'#7F77DD', label:'current i' },
+    { bg:'#E1F5EE', bc:'#1D9E75', label:'prime factor of n' },
+    { bg:'#FAECE7', bc:'#D85A30', label:'prime but not factor' },
+    { bg:'var(--bg)', bc:'var(--border)', label:'not prime' }
+  ],
+  1: [
+    { bg:'#E1F5EE', bc:'#1D9E75', label:'prime factors' },
+    { bg:'#FAC775', bc:'#EF9F27', label:'sphenic factors' },
+    { bg:'#FAECE7', bc:'#D85A30', label:'condition failed' }
+  ]
+};
+
+function renderLegend() {
+  document.getElementById('legend-area').innerHTML = LEGENDS[phase].map(l =>
+    `<div class="legend-item"><div class="legend-box" style="background:${l.bg};border-color:${l.bc}"></div>${l.label}</div>`
+  ).join('');
+}
+
+function render() {
+  const steps = currentSteps();
+  const s = steps[step];
+  const isLast = step === steps.length - 1;
+
+  const nv = document.getElementById('numline-viz');
+  const niv = document.getElementById('nidx-viz');
+  nv.innerHTML = ''; niv.innerHTML = '';
+  CANDIDATES.forEach((val, idx) => {
+    const state = s.cellStates[idx] || 'idle';
+    const d = document.createElement('div');
+    d.className = 'ncell ' + state;
+    d.textContent = val;
+    nv.appendChild(d);
+    const ic = document.createElement('div');
+    ic.className = 'nidx-cell';
+    ic.textContent = val;
+    niv.appendChild(ic);
+  });
+
+  document.getElementById('step-title').textContent = s.title;
+
+  const pta = document.getElementById('prime-trace-area');
+  if (s.primeTrace && phase === 0) {
+    pta.style.display = 'block';
+    const pt = s.primeTrace;
+    document.getElementById('prime-trace-title').textContent =
+      `is_prime(${pt.n})  —  check divisors 2 … ${pt.sqrtN}`;
+    const chips = pt.steps.length === 0
+      ? `<span class="prime-chip no-div">no divisors to check  →  True</span>`
+      : pt.steps.map(step => {
+          const cls = step.divides ? 'divides' : 'no-div';
+          return `<span class="prime-chip ${cls}">${pt.n} % ${step.i} = ${pt.n % step.i}${step.divides ? '  →  False' : ''}</span>`;
+        }).join('') + (pt.result ? `<span class="prime-chip no-div">→ True</span>` : '');
+    document.getElementById('prime-trace-chips').innerHTML = chips;
+  } else {
+    pta.style.display = 'none';
+  }
+
+  document.getElementById('code-lines').innerHTML = s.lines.map(l =>
+    `<div class="code-line active">${l}</div>`).join('');
+
+  document.getElementById('state-row').innerHTML = (s.stateItems || []).map(item =>
+    `<div class="state-box"><div class="state-lbl">${item.lbl}</div><div class="state-val">${item.val}</div></div>`
+  ).join('');
+
+  const pc = document.getElementById('primes-chips');
+  if (s.primes.length === 0) {
+    pc.innerHTML = `<span style="font-size:12px;color:var(--text3);font-family:var(--font-mono);">[]</span>`;
+  } else {
+    pc.innerHTML = s.primes.map(p =>
+      `<div class="p-chip${p === s.highlightPrime ? ' highlight' : ''}">${p}</div>`
+    ).join('');
+  }
+
+  document.getElementById('decision-box').textContent = s.decision;
+  document.getElementById('prev-btn').disabled = step === 0;
+  document.getElementById('next-btn').disabled = isLast;
+  document.getElementById('step-count').textContent = `Step ${step+1} / ${steps.length}`;
+
+  const rb = document.getElementById('result-banner');
+  if (phase === 0 && isLast) {
+    rb.className = 'result-banner yes';
+    rb.innerHTML = `✓ Phase 1 done. Prime factors of ${N}: [${primesFinal.join(', ')}]. Switch to Phase 2 →`;
+    rb.style.display = 'block';
+  } else if (phase === 1 && isLast) {
+    const sphenic = primesFinal.length === 3 && primesFinal[0]*primesFinal[1]*primesFinal[2] === N;
+    rb.className = 'result-banner ' + (sphenic ? 'yes' : 'no');
+    rb.innerHTML = sphenic
+      ? `✓ ${N} = ${primesFinal.join(' × ')} — Sphenic Number`
+      : `✗ ${N} does not meet sphenic conditions — Not Sphenic Number`;
+    rb.style.display = 'block';
+  } else {
+    rb.style.display = 'none';
+  }
+}
+
+function move(d) {
+  step = Math.max(0, Math.min(currentSteps().length - 1, step + d));
+  render();
+}
+
+function switchPhase(p) {
+  phase = p; step = 0;
+  document.getElementById('tab0').classList.toggle('active', p === 0);
+  document.getElementById('tab1').classList.toggle('active', p === 1);
+  renderLegend();
+  render();
+}
+
+function copyCode() {
+  const raw = `def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n**0.5)+1):
+        if n % i == 0:
+            return False
+    return True
+
+n = int(input("Enter number: "))
+primes = []
+
+for i in range(2, n):
+    if is_prime(i) and n % i == 0:
+        primes.append(i)
+
+if len(primes) == 3 and primes[0]*primes[1]*primes[2] == n:
+    print("Sphenic Number")
+else:
+    print("Not Sphenic Number")`;
+  navigator.clipboard.writeText(raw).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+renderLegend();
+render();
+</script>
+</body>
+</html>

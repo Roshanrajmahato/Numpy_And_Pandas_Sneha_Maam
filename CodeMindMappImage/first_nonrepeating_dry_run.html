@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Non-Repeating Char — Dry Run</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f4f0; --bg3: #eceae3;
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #8a8880;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --font-mono: 'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+    --font-sans: 'Inter','Segoe UI',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --bg2: #242420; --bg3: #2e2e2a;
+      --text: #e8e6df; --text2: #9c9a92; --text3: #6a6862;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+    }
+  }
+  body { font-family: var(--font-sans); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px; }
+  .wrap { width: 100%; max-width: 720px; }
+
+  /* ── CODE CARD ── */
+  .code-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
+  .code-card-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); font-family: var(--font-mono); }
+  .lang-badge { background: #534AB7; color: #EEEDFE; padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+  .copy-btn { cursor: pointer; background: none; border: 1px solid var(--border2); color: var(--text2); font-size: 11px; padding: 3px 10px; border-radius: 6px; font-family: var(--font-mono); transition: all .15s; }
+  .copy-btn:hover { background: var(--bg2); color: var(--text); }
+  pre { margin: 0; padding: 18px 20px; background: var(--bg); font-family: var(--font-mono); font-size: 12.5px; line-height: 1.85; color: var(--text2); overflow-x: auto; white-space: pre; }
+  .kw { color: #7F77DD; } .fn { color: #1D9E75; } .cm { color: var(--text3); font-style: italic; } .nm { color: #EF9F27; } .st { color: #D85A30; }
+  @media (prefers-color-scheme: dark) { .kw{color:#AFA9EC} .fn{color:#5DCAA5} .nm{color:#FAC775} .st{color:#F0997B} }
+
+  /* ── DRY RUN CARD ── */
+  .dry-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+  h2 { font-size: 17px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .subtitle { font-size: 12px; color: var(--text3); margin-bottom: 22px; font-family: var(--font-mono); }
+
+  /* ── PHASE TABS ── */
+  .phase-tabs { display: flex; gap: 6px; margin-bottom: 22px; }
+  .phase-tab { padding: 5px 16px; border-radius: 20px; font-size: 12px; font-family: var(--font-mono); border: 1px solid var(--border); background: var(--bg3); color: var(--text2); cursor: pointer; transition: all .2s; }
+  .phase-tab.active { background: #534AB7; color: #EEEDFE; border-color: #534AB7; }
+  @media (prefers-color-scheme: dark) { .phase-tab.active { background: #3C3489; color: #CECBF6; border-color: #534AB7; } }
+
+  /* ── LEGEND ── */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); font-family: var(--font-mono); }
+  .legend-box { width: 13px; height: 13px; border-radius: 3px; border: 1.5px solid; }
+
+  /* ── STRING VIZ ── */
+  .str-label { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 7px; }
+  .str-scroll { overflow-x: auto; padding-bottom: 6px; margin-bottom: 20px; }
+  .str-row { display: flex; gap: 4px; min-width: max-content; }
+  .idx-row { display: flex; gap: 4px; min-width: max-content; margin-top: 4px; }
+  .cell {
+    width: 36px; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 600; border: 1.5px solid var(--border);
+    background: var(--bg3); color: var(--text); transition: all .3s; font-family: var(--font-mono); flex-shrink: 0;
+  }
+  .idx-cell { width: 36px; text-align: center; font-size: 10px; color: var(--text3); font-family: var(--font-mono); flex-shrink: 0; }
+  .cell.current   { border-color: #7F77DD; background: #EEEDFE; color: #26215C; }
+  .cell.duplicate { border-color: #D85A30; background: #FAECE7; color: #4A1B0C; }
+  .cell.unique    { border-color: #1D9E75; background: #E1F5EE; color: #085041; }
+  .cell.answer    { border-color: #EF9F27; background: #FAC775; color: #412402; }
+  .cell.done      { border-color: var(--border); background: var(--bg); color: var(--text2); opacity: 0.55; }
+  @media (prefers-color-scheme: dark) {
+    .cell.current   { background: #26215C; color: #CECBF6; border-color: #7F77DD; }
+    .cell.duplicate { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+    .cell.unique    { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .cell.answer    { background: #633806; color: #FAC775; border-color: #EF9F27; }
+  }
+
+  /* ── STEP PANEL ── */
+  .step-panel { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .step-header { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+  .code-line { font-size: 12px; color: var(--text2); line-height: 1.95; padding: 2px 10px; border-radius: 5px; font-family: var(--font-mono); }
+  .code-line.active { background: #EEEDFE; color: #26215C; }
+  @media (prefers-color-scheme: dark) { .code-line.active { background: #26215C; color: #CECBF6; } }
+
+  /* ── STATE BOXES ── */
+  .state-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .state-box { flex: 1; min-width: 100px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .state-lbl { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .state-val { font-size: 12px; font-family: var(--font-mono); color: var(--text); word-break: break-all; line-height: 1.65; min-height: 18px; }
+
+  /* ── DICT VIZ ── */
+  .dict-area { margin-top: 14px; }
+  .dict-lbl { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .dict-grid { display: flex; gap: 6px; flex-wrap: wrap; }
+  .dict-entry {
+    display: flex; align-items: center; gap: 0;
+    border: 1px solid var(--border); border-radius: 7px;
+    overflow: hidden; font-family: var(--font-mono); font-size: 12px;
+    transition: all .3s;
+  }
+  .dict-entry.highlight { border-color: #7F77DD; }
+  .dict-entry.dup-entry { border-color: #D85A30; }
+  .dict-k { padding: 5px 10px; background: var(--bg3); color: var(--text2); font-weight: 600; border-right: 1px solid var(--border); }
+  .dict-v { padding: 5px 10px; background: var(--bg); color: var(--text); min-width: 28px; text-align: center; }
+  .dict-entry.highlight .dict-k { background: #EEEDFE; color: #3C3489; border-right-color: #7F77DD; }
+  .dict-entry.highlight .dict-v { background: #f5f3ff; color: #26215C; }
+  .dict-entry.dup-entry .dict-k  { background: #FAECE7; color: #712B13; border-right-color: #D85A30; }
+  .dict-entry.dup-entry .dict-v  { background: #fff5f2; color: #4A1B0C; }
+  @media (prefers-color-scheme: dark) {
+    .dict-entry.highlight .dict-k { background: #26215C; color: #CECBF6; border-right-color: #7F77DD; }
+    .dict-entry.highlight .dict-v { background: #1e1c3a; color: #AFA9EC; }
+    .dict-entry.dup-entry .dict-k { background: #4A1B0C; color: #F5C4B3; border-right-color: #993C1D; }
+    .dict-entry.dup-entry .dict-v { background: #2a1408; color: #F0997B; }
+  }
+
+  .decision { font-size: 12px; margin-top: 12px; padding: 8px 12px; border-radius: 6px; border-left: 3px solid #7F77DD; background: var(--bg2); color: var(--text2); font-family: var(--font-mono); line-height: 1.6; }
+
+  /* ── NAV ── */
+  .nav { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 7px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); transition: all .15s; font-family: var(--font-sans); }
+  .btn:hover:not(:disabled) { background: var(--bg2); border-color: #7F77DD; }
+  .btn:disabled { opacity: .35; cursor: default; }
+  .step-count { font-size: 12px; color: var(--text3); margin: 0 6px; font-family: var(--font-mono); }
+
+  .result-banner { margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; background: #E1F5EE; color: #085041; border: 1px solid #5DCAA5; font-family: var(--font-mono); line-height: 1.8; }
+  @media (prefers-color-scheme: dark) { .result-banner { background: #04342C; color: #9FE1CB; border-color: #0F6E56; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ PYTHON SOURCE ══ -->
+  <div class="code-card">
+    <div class="code-card-header">
+      <span>first_nonrepeating.py</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="lang-badge">Python</span>
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <pre>s = <span class="st">"RoshanRajMahato"</span>
+dic2 = {}
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(s)):
+    <span class="kw">if</span> s[i] <span class="kw">in</span> dic2:  <span class="cm"># key already present → update count</span>
+        dic2[s[i]] += <span class="nm">1</span>
+    <span class="kw">else</span>:
+        dic2[s[i]] = <span class="nm">1</span>  <span class="cm"># new key → add with count 1</span>
+<span class="fn">print</span>(dic2)
+<span class="kw">for</span> key, val <span class="kw">in</span> dic2.<span class="fn">items</span>():
+    <span class="kw">if</span> val == <span class="nm">1</span>:
+        <span class="fn">print</span>(key)
+        <span class="kw">break</span>
+<span class="kw">else</span>:
+    <span class="fn">print</span>(-<span class="nm">1</span>)</pre>
+  </div>
+
+  <!-- ══ DRY RUN ══ -->
+  <div class="dry-card">
+    <h2>First Non-Repeating Char — Dry Run</h2>
+    <div class="subtitle">s = "RoshanRajMahato"</div>
+
+    <div class="phase-tabs">
+      <div class="phase-tab active" id="tab0" onclick="switchPhase(0)">Phase 1 — build freq dict</div>
+      <div class="phase-tab" id="tab1" onclick="switchPhase(1)">Phase 2 — find answer</div>
+    </div>
+
+    <div class="legend" id="legend-area"></div>
+
+    <div class="str-label" id="str-label">s (index →)</div>
+    <div class="str-scroll">
+      <div class="str-row" id="str-viz"></div>
+      <div class="idx-row" id="idx-viz"></div>
+    </div>
+
+    <div class="step-panel">
+      <div class="step-header" id="step-title">Step</div>
+      <div id="code-lines"></div>
+      <div class="state-row" id="state-row"></div>
+      <div class="dict-area">
+        <div class="dict-lbl">dic2</div>
+        <div class="dict-grid" id="dict-viz"></div>
+      </div>
+      <div class="decision" id="decision-box"></div>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="prev-btn" onclick="move(-1)" disabled>← Prev</button>
+      <span class="step-count" id="step-count"></span>
+      <button class="btn" id="next-btn" onclick="move(1)">Next →</button>
+    </div>
+    <div id="result-banner" style="display:none" class="result-banner"></div>
+  </div>
+</div>
+
+<script>
+const S = "RoshanRajMahato";
+
+function buildPhase1() {
+  const steps = [];
+  const dic2 = {};
+
+  steps.push({
+    title: "Init",
+    curIdx: null,
+    cellStates: S.split('').map(() => 'idle'),
+    char: null, inDic: null,
+    dic2: {},
+    highlightKey: null, dupKey: null,
+    lines: ['s = "RoshanRajMahato"', 'dic2 = {}'],
+    stateItems: [],
+    decision: "Initialize string s and empty frequency dict dic2. Start for loop."
+  });
+
+  for (let i = 0; i < S.length; i++) {
+    const ch = S[i];
+    const inDic = ch in dic2;
+    const oldVal = dic2[ch] || 0;
+
+    const cellStates = S.split('').map((_, j) => {
+      if (j < i) return 'done';
+      if (j === i) return inDic ? 'duplicate' : 'current';
+      return 'idle';
+    });
+
+    if (inDic) dic2[ch] += 1;
+    else dic2[ch] = 1;
+
+    steps.push({
+      title: `i = ${i}  →  s[${i}] = "${ch}"`,
+      curIdx: i,
+      cellStates,
+      char: ch, inDic,
+      dic2: Object.assign({}, dic2),
+      highlightKey: inDic ? null : ch,
+      dupKey: inDic ? ch : null,
+      lines: [
+        `i = ${i},  s[i] = "${ch}"`,
+        inDic
+          ? `"${ch}" in dic2  →  True  →  dic2["${ch}"] += 1  (${oldVal} → ${oldVal+1})`
+          : `"${ch}" not in dic2  →  False  →  dic2["${ch}"] = 1`
+      ],
+      stateItems: [
+        { lbl: 'i', val: String(i) },
+        { lbl: 's[i]', val: `"${ch}"` },
+        { lbl: 'in dic2?', val: String(inDic) },
+        { lbl: 'dic2["'+ch+'"]', val: String(dic2[ch]) }
+      ],
+      decision: inDic
+        ? `"${ch}" already seen. Increment count: ${oldVal} → ${oldVal+1}.`
+        : `"${ch}" is new. Add to dic2 with count = 1.`
+    });
+  }
+
+  const finalCells = S.split('').map(() => 'done');
+  steps.push({
+    title: "Phase 1 complete",
+    curIdx: null, cellStates: finalCells,
+    char: null, inDic: null,
+    dic2: Object.assign({}, dic2),
+    highlightKey: null, dupKey: null,
+    lines: ["print(dic2)"],
+    stateItems: [],
+    decision: "All characters counted. Switch to Phase 2 to find the first non-repeating character."
+  });
+
+  return steps;
+}
+
+function buildPhase2(dic2) {
+  const steps = [];
+  const entries = Object.entries(dic2);
+
+  steps.push({
+    title: "Start Phase 2",
+    scanIdx: null,
+    cellStates: S.split('').map(ch => dic2[ch] > 1 ? 'duplicate' : 'unique'),
+    key: null, val: null,
+    dic2: Object.assign({}, dic2),
+    highlightKey: null, answerKey: null,
+    lines: ["for key, val in dic2.items():"],
+    stateItems: [],
+    decision: "Iterate dic2 in insertion order. Find the first key with val == 1."
+  });
+
+  for (let i = 0; i < entries.length; i++) {
+    const [key, val] = entries[i];
+    const isAnswer = val === 1;
+    const answerKey = isAnswer ? key : null;
+
+    const strIdx = S.indexOf(key);
+    const cellStates = S.split('').map(ch => dic2[ch] > 1 ? 'duplicate' : 'unique');
+    if (isAnswer && strIdx !== -1) cellStates[strIdx] = 'answer';
+
+    steps.push({
+      title: `key = "${key}",  val = ${val}`,
+      scanIdx: i,
+      cellStates,
+      key, val,
+      dic2: Object.assign({}, dic2),
+      highlightKey: !isAnswer ? key : null,
+      answerKey,
+      lines: [
+        `key = "${key}",  val = ${val}`,
+        isAnswer
+          ? `val == 1  →  True  →  print("${key}")  then break`
+          : `val == 1  →  False  →  continue`
+      ],
+      stateItems: [
+        { lbl: 'key', val: `"${key}"` },
+        { lbl: 'val', val: String(val) },
+        { lbl: 'val == 1?', val: String(isAnswer) }
+      ],
+      decision: isAnswer
+        ? `"${key}" appears exactly once. This is the answer! Print "${key}" and break.`
+        : `"${key}" appears ${val} times (duplicate). Skip and continue.`
+    });
+
+    if (isAnswer) break;
+  }
+
+  return steps;
+}
+
+const dic2Final = {};
+for (let i = 0; i < S.length; i++) {
+  dic2Final[S[i]] = (dic2Final[S[i]] || 0) + 1;
+}
+
+const phase1Steps = buildPhase1();
+const phase2Steps = buildPhase2(dic2Final);
+
+let phase = 0;
+let step = 0;
+
+function currentSteps() { return phase === 0 ? phase1Steps : phase2Steps; }
+
+const LEGENDS = {
+  0: [
+    { bg:'#EEEDFE', bc:'#7F77DD', label:'current (new char)' },
+    { bg:'#FAECE7', bc:'#D85A30', label:'current (duplicate)' },
+    { bg:'#E1F5EE', bc:'#1D9E75', label:'already processed' }
+  ],
+  1: [
+    { bg:'#FAECE7', bc:'#D85A30', label:'duplicate (count > 1)' },
+    { bg:'#E1F5EE', bc:'#1D9E75', label:'unique (count = 1)' },
+    { bg:'#FAC775', bc:'#EF9F27', label:'answer found' }
+  ]
+};
+
+function renderLegend() {
+  const la = document.getElementById('legend-area');
+  la.innerHTML = LEGENDS[phase].map(l =>
+    `<div class="legend-item"><div class="legend-box" style="background:${l.bg};border-color:${l.bc}"></div>${l.label}</div>`
+  ).join('');
+}
+
+function render() {
+  const steps = currentSteps();
+  const s = steps[step];
+  const isLast = step === steps.length - 1;
+
+  const sv = document.getElementById('str-viz');
+  const iv = document.getElementById('idx-viz');
+  sv.innerHTML = ''; iv.innerHTML = '';
+  S.split('').forEach((ch, i) => {
+    const state = s.cellStates[i] || 'idle';
+    const d = document.createElement('div');
+    d.className = 'cell ' + state;
+    d.textContent = ch;
+    sv.appendChild(d);
+    const idx = document.createElement('div');
+    idx.className = 'idx-cell';
+    idx.textContent = i;
+    iv.appendChild(idx);
+  });
+
+  document.getElementById('step-title').textContent = s.title;
+  document.getElementById('code-lines').innerHTML = s.lines.map(l =>
+    `<div class="code-line active">${l}</div>`).join('');
+
+  const sr = document.getElementById('state-row');
+  sr.innerHTML = (s.stateItems || []).map(item =>
+    `<div class="state-box"><div class="state-lbl">${item.lbl}</div><div class="state-val">${item.val}</div></div>`
+  ).join('');
+
+  const dv = document.getElementById('dict-viz');
+  dv.innerHTML = '';
+  if (Object.keys(s.dic2).length === 0) {
+    const e = document.createElement('span');
+    e.style.cssText = 'font-size:12px;color:var(--text3);font-family:var(--font-mono);';
+    e.textContent = '{}';
+    dv.appendChild(e);
+  } else {
+    Object.entries(s.dic2).forEach(([k, v]) => {
+      const isHighlight = k === s.highlightKey;
+      const isDup = k === s.dupKey || (phase === 1 && v > 1 && k !== s.answerKey);
+      const isAns = k === s.answerKey;
+      const entry = document.createElement('div');
+      let cls = 'dict-entry';
+      if (isAns) cls += ' highlight';
+      else if (isDup) cls += ' dup-entry';
+      else if (isHighlight) cls += ' highlight';
+      entry.className = cls;
+      entry.innerHTML = `<div class="dict-k">${k}</div><div class="dict-v">${v}</div>`;
+      dv.appendChild(entry);
+    });
+  }
+
+  document.getElementById('decision-box').textContent = s.decision;
+  document.getElementById('prev-btn').disabled = step === 0;
+  document.getElementById('next-btn').disabled = isLast;
+  document.getElementById('step-count').textContent = `Step ${step+1} / ${steps.length}`;
+
+  const rb = document.getElementById('result-banner');
+  if (phase === 0 && isLast) {
+    rb.innerHTML = `✓ Phase 1 done. dic2 built. Switch to Phase 2 →`;
+    rb.style.display = 'block';
+  } else if (phase === 1 && isLast) {
+    const ans = s.key;
+    rb.innerHTML = `✓ First non-repeating character: "${ans}"`;
+    rb.style.display = 'block';
+  } else {
+    rb.style.display = 'none';
+  }
+}
+
+function move(d) {
+  step = Math.max(0, Math.min(currentSteps().length - 1, step + d));
+  render();
+}
+
+function switchPhase(p) {
+  phase = p; step = 0;
+  document.getElementById('tab0').classList.toggle('active', p === 0);
+  document.getElementById('tab1').classList.toggle('active', p === 1);
+  renderLegend();
+  render();
+}
+
+function copyCode() {
+  const raw = `s="RoshanRajMahato"
+dic2={}
+for i in range(len(s)):
+    if s[i] in dic2:
+        dic2[s[i]]+=1
+    else:
+        dic2[s[i]]=1
+print(dic2)
+for key,val in dic2.items():
+    if val==1:
+        print(key)
+        break
+else:
+    print(-1)`;
+  navigator.clipboard.writeText(raw).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+renderLegend();
+render();
+</script>
+</body>
+</html>

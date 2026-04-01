@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two Sum Pairs — Dry Run</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f4f0; --bg3: #eceae3;
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #8a8880;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --font-mono: 'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+    --font-sans: 'Inter','Segoe UI',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --bg2: #242420; --bg3: #2e2e2a;
+      --text: #e8e6df; --text2: #9c9a92; --text3: #6a6862;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+    }
+  }
+  body { font-family: var(--font-sans); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px; }
+  .wrap { width: 100%; max-width: 680px; }
+
+  /* ── CODE CARD ── */
+  .code-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
+  .code-card-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); font-family: var(--font-mono); }
+  .lang-badge { background: #534AB7; color: #EEEDFE; padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+  .copy-btn { cursor: pointer; background: none; border: 1px solid var(--border2); color: var(--text2); font-size: 11px; padding: 3px 10px; border-radius: 6px; font-family: var(--font-mono); transition: all .15s; }
+  .copy-btn:hover { background: var(--bg2); color: var(--text); }
+  pre { margin: 0; padding: 18px 20px; background: var(--bg); font-family: var(--font-mono); font-size: 12.5px; line-height: 1.8; color: var(--text2); overflow-x: auto; white-space: pre; }
+  .kw { color: #7F77DD; } .fn { color: #1D9E75; } .cm { color: var(--text3); font-style: italic; } .nm { color: #EF9F27; } .st { color: #D85A30; }
+  @media (prefers-color-scheme: dark) { .kw { color: #AFA9EC; } .fn { color: #5DCAA5; } .nm { color: #FAC775; } .st { color: #F0997B; } }
+
+  /* ── DRY RUN CARD ── */
+  .dry-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+  h2 { font-size: 17px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .subtitle { font-size: 12px; color: var(--text3); margin-bottom: 24px; font-family: var(--font-mono); }
+
+  /* ── ARRAY VIZ ── */
+  .array-section { margin-bottom: 20px; }
+  .array-label { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 6px; }
+  .array-scroll { overflow-x: auto; padding-bottom: 4px; }
+  .array-row { display: flex; gap: 5px; min-width: max-content; }
+  .idx-row { display: flex; gap: 5px; min-width: max-content; margin-top: 4px; }
+  .cell {
+    width: 40px; height: 40px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; border: 1.5px solid var(--border);
+    background: var(--bg3); color: var(--text); transition: all .3s; font-family: var(--font-mono); flex-shrink: 0;
+  }
+  .idx-cell { width: 40px; text-align: center; font-size: 10px; color: var(--text3); font-family: var(--font-mono); flex-shrink: 0; }
+  .cell.current  { border-color: #7F77DD; background: #EEEDFE; color: #26215C; }
+  .cell.in-seen  { border-color: #1D9E75; background: #E1F5EE; color: #085041; }
+  .cell.matched  { border-color: #EF9F27; background: #FAC775; color: #412402; }
+  .cell.complement { border-color: #D85A30; background: #FAECE7; color: #4A1B0C; }
+  @media (prefers-color-scheme: dark) {
+    .cell.current  { background: #26215C; color: #CECBF6; border-color: #7F77DD; }
+    .cell.in-seen  { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .cell.matched  { background: #633806; color: #FAC775; border-color: #EF9F27; }
+    .cell.complement { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+  }
+
+  /* ── LEGEND ── */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); font-family: var(--font-mono); }
+  .legend-box { width: 13px; height: 13px; border-radius: 3px; border: 1.5px solid; }
+
+  /* ── STEP PANEL ── */
+  .step-panel { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .step-header { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .code-line { font-size: 12px; color: var(--text2); line-height: 1.9; padding: 2px 10px; border-radius: 5px; font-family: var(--font-mono); }
+  .code-line.active { background: #EEEDFE; color: #26215C; }
+  @media (prefers-color-scheme: dark) { .code-line.active { background: #26215C; color: #CECBF6; } }
+
+  /* ── STATE PANELS ── */
+  .state-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .state-box { flex: 1; min-width: 140px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .state-box-label { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .state-box-val { font-size: 12px; font-family: var(--font-mono); color: var(--text); word-break: break-all; line-height: 1.6; min-height: 18px; }
+
+  .decision { font-size: 12px; margin-top: 12px; padding: 8px 12px; border-radius: 6px; border-left: 3px solid #7F77DD; background: var(--bg2); color: var(--text2); font-family: var(--font-mono); line-height: 1.6; }
+
+  /* ── NAV ── */
+  .nav { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 7px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); transition: all .15s; font-family: var(--font-sans); }
+  .btn:hover:not(:disabled) { background: var(--bg2); border-color: #7F77DD; }
+  .btn:disabled { opacity: .35; cursor: default; }
+  .step-count { font-size: 12px; color: var(--text3); margin: 0 6px; font-family: var(--font-mono); }
+
+  .result-banner { margin-top: 14px; padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; background: #E1F5EE; color: #085041; border: 1px solid #5DCAA5; font-family: var(--font-mono); line-height: 1.7; }
+  @media (prefers-color-scheme: dark) { .result-banner { background: #04342C; color: #9FE1CB; border-color: #0F6E56; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ PYTHON SOURCE ══ -->
+  <div class="code-card">
+    <div class="code-card-header">
+      <span>two_sum_pairs.py</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="lang-badge">Python</span>
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <pre>l1 = [<span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">4</span>, <span class="nm">2</span>, <span class="nm">5</span>, <span class="nm">6</span>, <span class="nm">7</span>, <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">4</span>, <span class="nm">8</span>, <span class="nm">1</span>, <span class="nm">4</span>, <span class="nm">5</span>]
+target = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Enter a value: "</span>))
+seen = <span class="fn">set</span>()
+res = []
+<span class="kw">for</span> num <span class="kw">in</span> l1:
+    complement = target - num
+    <span class="kw">if</span> complement <span class="kw">in</span> seen:
+        res.<span class="fn">append</span>((complement, num))
+    seen.<span class="fn">add</span>(num)
+<span class="fn">print</span>(res)</pre>
+  </div>
+
+  <!-- ══ DRY RUN ══ -->
+  <div class="dry-card">
+    <h2>Two Sum Pairs — Dry Run</h2>
+    <div class="subtitle">l1 = [2,3,1,4,2,5,6,7,1,2,4,8,1,4,5] &nbsp;|&nbsp; target = 6</div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-box" style="background:#EEEDFE;border-color:#7F77DD"></div>current num</div>
+      <div class="legend-item"><div class="legend-box" style="background:#FAECE7;border-color:#D85A30"></div>complement</div>
+      <div class="legend-item"><div class="legend-box" style="background:#E1F5EE;border-color:#1D9E75"></div>in seen</div>
+      <div class="legend-item"><div class="legend-box" style="background:#FAC775;border-color:#EF9F27"></div>pair found</div>
+    </div>
+
+    <div class="array-section">
+      <div class="array-label">l1 (index →)</div>
+      <div class="array-scroll">
+        <div class="array-row" id="array-viz"></div>
+        <div class="idx-row" id="idx-viz"></div>
+      </div>
+    </div>
+
+    <div class="step-panel">
+      <div class="step-header" id="step-title">Step</div>
+      <div id="code-lines"></div>
+      <div class="state-row">
+        <div class="state-box">
+          <div class="state-box-label">num</div>
+          <div class="state-box-val" id="sv-num">—</div>
+        </div>
+        <div class="state-box">
+          <div class="state-box-label">complement</div>
+          <div class="state-box-val" id="sv-comp">—</div>
+        </div>
+        <div class="state-box" style="flex:2">
+          <div class="state-box-label">seen</div>
+          <div class="state-box-val" id="sv-seen">{}</div>
+        </div>
+        <div class="state-box" style="flex:2">
+          <div class="state-box-label">res</div>
+          <div class="state-box-val" id="sv-res">[]</div>
+        </div>
+      </div>
+      <div class="decision" id="decision-box"></div>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="prev-btn" onclick="move(-1)" disabled>← Prev</button>
+      <span class="step-count" id="step-count"></span>
+      <button class="btn" id="next-btn" onclick="move(1)">Next →</button>
+    </div>
+    <div id="result-banner" style="display:none" class="result-banner"></div>
+  </div>
+</div>
+
+<script>
+const l1 = [2,3,1,4,2,5,6,7,1,2,4,8,1,4,5];
+const TARGET = 6;
+
+function buildSteps() {
+  const steps = [];
+  const seen = new Set();
+  const res = [];
+
+  steps.push({
+    title: "Init",
+    curIdx: null, compIdx: null, matchedIdxs: [],
+    num: null, comp: null,
+    seen: new Set(), res: [...res],
+    lines: ["seen = set()", "res = []"],
+    decision: "Initialize empty seen set and result list. Start iterating l1."
+  });
+
+  for (let i = 0; i < l1.length; i++) {
+    const num = l1[i];
+    const complement = TARGET - num;
+    const compIdx = l1.indexOf(complement, 0);
+    const found = seen.has(complement);
+
+    const matchedIdxs = [];
+    if (found) {
+      res.push([complement, num]);
+      let ci = l1.lastIndexOf(complement, i - 1);
+      if (ci !== -1) matchedIdxs.push(ci);
+      matchedIdxs.push(i);
+    }
+
+    steps.push({
+      title: `Iteration i=${i}  →  num = ${num}`,
+      curIdx: i,
+      compIdx: found ? l1.lastIndexOf(complement, i - 1) : null,
+      matchedIdxs: [...matchedIdxs],
+      num, comp: complement,
+      seen: new Set(seen),
+      res: res.map(r => [...r]),
+      lines: [
+        `num = ${num}`,
+        `complement = ${TARGET} - ${num}  →  ${complement}`,
+        found
+          ? `complement (${complement}) in seen  →  True  →  res.append((${complement}, ${num}))`
+          : `complement (${complement}) in seen  →  False`,
+        `seen.add(${num})`
+      ],
+      decision: found
+        ? `Found pair! (${complement}, ${num}) sums to ${TARGET}. Append to res.`
+        : `complement ${complement} not in seen yet. Add ${num} to seen.`
+    });
+
+    seen.add(num);
+  }
+
+  steps.push({
+    title: "Done",
+    curIdx: null, compIdx: null, matchedIdxs: [],
+    num: null, comp: null,
+    seen: new Set(seen), res: res.map(r => [...r]),
+    lines: ["print(res)"],
+    decision: `Loop complete. Final result printed.`
+  });
+
+  return steps;
+}
+
+const steps = buildSteps();
+let step = 0;
+
+function setStr(s) {
+  if (s.size === 0) return '{}';
+  return '{' + [...s].join(', ') + '}';
+}
+function resStr(r) {
+  if (r.length === 0) return '[]';
+  return '[' + r.map(p => `(${p[0]},${p[1]})`).join(', ') + ']';
+}
+
+function render() {
+  const s = steps[step];
+  const isLast = step === steps.length - 1;
+
+  const ar = document.getElementById('array-viz');
+  const ix = document.getElementById('idx-viz');
+  ar.innerHTML = ''; ix.innerHTML = '';
+
+  l1.forEach((val, i) => {
+    const cls = [];
+    if (s.matchedIdxs.includes(i)) cls.push('matched');
+    else if (i === s.curIdx) cls.push('current');
+    else if (i === s.compIdx) cls.push('complement');
+    else if (s.seen && [...s.seen].includes(val) && i < (s.curIdx ?? l1.length)) cls.push('in-seen');
+
+    const d = document.createElement('div');
+    d.className = 'cell ' + cls.join(' ');
+    d.textContent = val;
+    ar.appendChild(d);
+
+    const idx = document.createElement('div');
+    idx.className = 'idx-cell';
+    idx.textContent = i;
+    ix.appendChild(idx);
+  });
+
+  document.getElementById('step-title').textContent = s.title;
+  document.getElementById('code-lines').innerHTML = s.lines.map(l => `<div class="code-line active">${l}</div>`).join('');
+
+  document.getElementById('sv-num').textContent  = s.num  !== null ? s.num  : '—';
+  document.getElementById('sv-comp').textContent = s.comp !== null ? s.comp : '—';
+  document.getElementById('sv-seen').textContent = setStr(s.seen);
+  document.getElementById('sv-res').textContent  = resStr(s.res);
+  document.getElementById('decision-box').textContent = s.decision;
+
+  document.getElementById('prev-btn').disabled = step === 0;
+  document.getElementById('next-btn').disabled = isLast;
+  document.getElementById('step-count').textContent = `Step ${step+1} / ${steps.length}`;
+
+  const rb = document.getElementById('result-banner');
+  if (isLast) {
+    const pairs = s.res.map(p => `(${p[0]},${p[1]})`).join('  ');
+    rb.innerHTML = `✓ Final output for target = ${TARGET}:<br>${resStr(s.res)}`;
+    rb.style.display = 'block';
+  } else {
+    rb.style.display = 'none';
+  }
+}
+
+function move(d) {
+  step = Math.max(0, Math.min(steps.length - 1, step + d));
+  render();
+}
+
+function copyCode() {
+  const raw = `l1 = [2, 3, 1, 4, 2, 5, 6, 7, 1, 2, 4, 8, 1, 4, 5]
+target = int(input("Enter a value: "))
+seen = set()
+res = []
+for num in l1:
+    complement = target - num
+    if complement in seen:
+        res.append((complement, num))
+    seen.add(num)
+print(res)`;
+  navigator.clipboard.writeText(raw).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

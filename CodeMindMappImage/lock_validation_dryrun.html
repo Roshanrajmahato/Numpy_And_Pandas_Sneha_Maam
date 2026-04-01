@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Lock System — Dry Run</title>
+
+<style>
+
+*, *::before, *::after {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+:root {
+
+--bg:#ffffff;
+--bg2:#f5f4f0;
+--bg3:#eceae3;
+
+--text:#1a1a18;
+--text2:#5f5e5a;
+--text3:#8a8880;
+
+--border:rgba(0,0,0,0.12);
+--border2:rgba(0,0,0,0.22);
+
+--font-mono:'JetBrains Mono', monospace;
+--font-sans:'Inter', system-ui;
+
+}
+
+body {
+
+font-family:var(--font-sans);
+background:var(--bg);
+
+display:flex;
+justify-content:center;
+padding:40px;
+
+}
+
+.card {
+
+width:100%;
+max-width:650px;
+
+background:var(--bg2);
+border:1px solid var(--border);
+
+border-radius:16px;
+padding:26px;
+
+}
+
+h2 {
+font-size:18px;
+margin-bottom:4px;
+}
+
+.subtitle {
+
+font-size:12px;
+color:var(--text3);
+margin-bottom:20px;
+font-family:var(--font-mono);
+
+}
+
+.tabs {
+
+display:flex;
+gap:6px;
+margin-bottom:20px;
+
+}
+
+.tab {
+
+padding:6px 16px;
+border-radius:20px;
+cursor:pointer;
+
+font-size:12px;
+
+border:1px solid var(--border);
+background:var(--bg3);
+
+}
+
+.tab.active {
+
+background:#534AB7;
+color:white;
+
+}
+
+.step-panel {
+
+background:var(--bg);
+
+border:1px solid var(--border);
+
+border-radius:12px;
+padding:16px;
+
+margin-bottom:16px;
+
+}
+
+.step-header {
+
+font-size:13px;
+font-weight:600;
+
+margin-bottom:10px;
+
+}
+
+.code-line {
+
+font-size:12px;
+padding:4px 10px;
+
+font-family:var(--font-mono);
+
+}
+
+.vars {
+
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+
+margin-top:12px;
+
+}
+
+.var-chip {
+
+padding:4px 10px;
+border-radius:20px;
+
+font-size:12px;
+
+border:1px solid var(--border);
+background:var(--bg2);
+
+font-family:var(--font-mono);
+
+}
+
+.decision {
+
+margin-top:12px;
+
+padding:8px 12px;
+
+font-size:12px;
+
+border-left:4px solid #7F77DD;
+
+background:var(--bg2);
+
+font-family:var(--font-mono);
+
+}
+
+.nav {
+
+display:flex;
+align-items:center;
+gap:8px;
+
+}
+
+.btn {
+
+padding:7px 16px;
+cursor:pointer;
+
+border-radius:8px;
+
+border:1px solid var(--border2);
+background:var(--bg3);
+
+}
+
+.step-count {
+
+font-size:12px;
+color:var(--text3);
+
+font-family:var(--font-mono);
+
+}
+
+.result-banner {
+
+margin-top:14px;
+padding:10px 16px;
+
+border-radius:8px;
+
+font-size:13px;
+
+background:#E1F5EE;
+color:#085041;
+
+border:1px solid #5DCAA5;
+
+font-family:var(--font-mono);
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Lock System — Dry Run</h2>
+
+<div class="subtitle">
+n = 2469
+</div>
+
+<!-- Python Code Section -->
+
+<h3 style="margin-bottom:10px;">Python Code</h3>
+
+<pre id="python-code" style="
+margin-bottom:25px;
+padding:18px 20px;
+background:var(--bg);
+border:1px solid var(--border);
+border-radius:10px;
+font-family:var(--font-mono);
+font-size:12.5px;
+line-height:1.7;
+overflow-x:auto;
+white-space:pre;
+">
+
+def getNoOfDigits(n):
+    digits = 0
+    if n == 0:
+        return 1
+    temp = n
+    while temp > 0:
+        digits += 1
+        temp //= 10
+    return digits
+
+
+def getSumOfDigits(n):
+    sum = 0
+    temp = n
+    while temp > 0:
+        sum += temp % 10
+        temp //= 10
+    return sum
+
+
+def getEvenDigits(n):
+    evenDigits = 0
+    temp = n
+    while temp > 0:
+        rem = temp % 10
+        if rem % 2 == 0:
+            evenDigits += 1
+        temp //= 10
+    return evenDigits
+
+
+def check(n):
+    originalDigits = getNoOfDigits(n)
+    st = set()
+    temp = n
+    while temp > 0:
+        rem = temp % 10
+        st.add(rem)
+        temp //= 10
+
+    if len(st) == originalDigits:
+        return True
+    else:
+        return False
+
+
+if __name__ == "__main__":
+    n = int(input())
+
+    if (
+        check(n) == False
+        or getNoOfDigits(n) != 4
+        or getSumOfDigits(n) % 3 != 0
+        or getEvenDigits(n) != 2
+    ):
+        print("LOCKED")
+    else:
+        print("OPEN")
+
+</pre>
+
+<div class="tabs">
+
+<div class="tab active" onclick="switchTab(0)">
+getNoOfDigits()
+</div>
+
+<div class="tab" onclick="switchTab(1)">
+getSumOfDigits()
+</div>
+
+<div class="tab" onclick="switchTab(2)">
+getEvenDigits()
+</div>
+
+<div class="tab" onclick="switchTab(3)">
+check()
+</div>
+
+<div class="tab" onclick="switchTab(4)">
+Final Decision
+</div>
+
+</div>
+
+<div class="step-panel">
+
+<div class="step-header" id="step-title">
+Step
+</div>
+
+<div id="code-lines"></div>
+
+<div class="vars" id="vars-row"></div>
+
+<div class="decision" id="decision-box"></div>
+
+</div>
+
+<div class="nav">
+
+<button class="btn" id="prev-btn"
+onclick="move(-1)">
+← Prev
+</button>
+
+<span class="step-count"
+id="step-count">
+</span>
+
+<button class="btn"
+onclick="move(1)">
+Next →
+</button>
+
+</div>
+
+<div id="result-banner"
+style="display:none"
+class="result-banner">
+</div>
+
+</div>
+
+<script>
+
+/* Your existing JS remains unchanged */
+
+const stepsData = [
+
+[
+{title:"Start",lines:["digits = 0","temp = 2469"],vars:{digits:0,temp:2469},decision:"Start counting digits"},
+{title:"Step",lines:["temp > 0 → digits++"],vars:{digits:1,temp:246},decision:"2469 → 246"},
+{title:"Step",lines:["temp > 0 → digits++"],vars:{digits:2,temp:24},decision:"246 → 24"},
+{title:"Step",lines:["temp > 0 → digits++"],vars:{digits:3,temp:2},decision:"24 → 2"},
+{title:"End",lines:["Return digits"],vars:{digits:4},decision:"Total digits = 4 ✓"}
+],
+
+[
+{title:"Start",lines:["sum = 0"],vars:{sum:0,temp:2469},decision:"Start summing digits"},
+{title:"Add",lines:["sum += 9"],vars:{sum:9,temp:246},decision:"Add 9"},
+{title:"Add",lines:["sum += 6"],vars:{sum:15,temp:24},decision:"Add 6"},
+{title:"Add",lines:["sum += 4"],vars:{sum:19,temp:2},decision:"Add 4"},
+{title:"Add",lines:["sum += 2"],vars:{sum:21},decision:"Final sum = 21"}
+],
+
+[
+{title:"Start",lines:["evenDigits=0"],vars:{evenDigits:0},decision:"Start counting even digits"},
+{title:"Check",lines:["9 → odd"],vars:{evenDigits:0},decision:"Ignore"},
+{title:"Check",lines:["6 → even"],vars:{evenDigits:1},decision:"Count 6"},
+{title:"Check",lines:["4 → even"],vars:{evenDigits:2},decision:"Count 4"},
+{title:"Check",lines:["2 → even"],vars:{evenDigits:3},decision:"Count 2"}
+],
+
+[
+{title:"Start",lines:["Insert digits into set"],vars:{set:"{9}"},decision:"Add 9"},
+{title:"Step",lines:["Insert digit"],vars:{set:"{9,6}"},decision:"Add 6"},
+{title:"Step",lines:["Insert digit"],vars:{set:"{9,6,4}"},decision:"Add 4"},
+{title:"Step",lines:["Insert digit"],vars:{set:"{9,6,4,2}"},decision:"Add 2"},
+{title:"Result",lines:["len(set)=digits"],vars:{unique:true},decision:"All digits unique ✓"}
+],
+
+[
+{title:"Final Check",
+lines:[
+"Unique digits ✓",
+"Digits == 4 ✓",
+"Sum % 3 == 0 ✓",
+"Even digits == 2 ✗"
+],
+vars:{},
+decision:"Condition fails → LOCKED"
+}
+
+]
+
+];
+
+let tab = 0;
+let step = 0;
+
+function getSteps(){
+return stepsData[tab];
+}
+
+function render(){
+
+const steps = getSteps();
+const s = steps[step];
+
+document.getElementById('step-title').textContent = s.title;
+
+document.getElementById('code-lines').innerHTML =
+s.lines.map(l =>
+`<div class="code-line">${l}</div>`
+).join('');
+
+document.getElementById('vars-row').innerHTML =
+Object.entries(s.vars)
+.map(([k,v]) =>
+`<div class="var-chip">${k} = ${v}</div>`
+).join('');
+
+document.getElementById('decision-box').textContent =
+s.decision;
+
+document.getElementById('step-count').textContent =
+`Step ${step+1}/${steps.length}`;
+
+const rb = document.getElementById('result-banner');
+
+if(tab===4){
+
+rb.style.display='block';
+rb.textContent='🔒 FINAL RESULT: LOCKED';
+
+}
+else{
+
+rb.style.display='none';
+
+}
+
+}
+
+function move(d){
+
+const steps=getSteps();
+
+step=Math.max(
+0,
+Math.min(steps.length-1,step+d)
+);
+
+render();
+
+}
+
+function switchTab(t){
+
+tab=t;
+step=0;
+
+document
+.querySelectorAll('.tab')
+.forEach((el,i)=>
+el.classList.toggle('active',i===t)
+);
+
+render();
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>

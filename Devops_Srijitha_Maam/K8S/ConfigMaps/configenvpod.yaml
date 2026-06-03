@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-pod
+spec:
+  containers:
+  - name: myapp
+    image: busybox
+    command: [ "/bin/sh", "-c", "env; sleep 3600" ]
+    env:
+    - name: DB_HOST
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: DB_HOST
+    - name: DB_PORT
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: DB_PORTi
+    - name: DB_NAME
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: DB_NAME
+        

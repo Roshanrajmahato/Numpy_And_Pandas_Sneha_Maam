@@ -1,0 +1,219 @@
+Interview Q&A for GenAI:-
+
+1. FastAPI & Microservices
+
+Q: What is FastAPI and why is it used?
+Definition:
+FastAPI is a Python framework to quickly build REST APIs. It is faster than Flask, supports async requests, and automatically generates API documentation.
+
+Example:
+Imagine building a “Chatbot API”.
+
+Student sends: "Tell me about Spark".
+
+FastAPI receives the request → calls the LLM → sends response back.
+
+With FastAPI, this is just 5–10 lines of code.
+
+2. Retrieval-Augmented Generation (RAG)
+
+Q: What is RAG and why do we use it?
+Definition:
+RAG = Retrieval + Generation. It retrieves facts from a database and feeds them into the LLM before generating an answer.
+
+Example:
+
+Without RAG: Ask GPT → “Who is the CEO of Infosys?” → It may hallucinate.
+
+With RAG: The system first searches Infosys company database, finds “Salil Parekh” → then LLM generates answer:
+ “The current CEO of Infosys is Salil Parekh.”
+
+
+3. Prompt Chain
+
+Q: What is a prompt chain?
+Definition:
+A prompt chain = a sequence of prompts where the output of one step becomes the input of the next step.
+
+Example:
+You want to build a travel assistant:
+
+Prompt 1 → Extract destination from user query (“Plan a trip to Goa”) → result: "Goa".
+
+Prompt 2 → Search hotels in "Goa".
+
+Prompt 3 → Generate full trip plan (places + hotels + food).
+
+This is a chain of prompts.
+
+This ensures accuracy.
+
+4. Docker & Kubernetes
+
+Q: Why do we use Docker and Kubernetes?
+Definition:
+
+Docker → Packages app with all dependencies (runs anywhere).
+
+Kubernetes → Manages many Docker containers (auto-scaling, restarting).
+
+Example:
+
+Without Docker → Your chatbot runs fine on your laptop, but crashes on server.
+
+With Docker → You create a “container” → runs same way everywhere.
+
+With Kubernetes → If 1000 students start using chatbot, it launches extra containers automatically.
+
+5. Monitoring GenAI
+
+Q: How to monitor an LLM app?
+Definition:
+Monitoring = tracking how well the system works (accuracy, cost, speed).
+
+Example:
+You deployed a document Q&A bot.
+
+Track latency: If answers take >10s → bad UX.
+
+Track token usage: If 1 user costs ₹1000/month → optimize.
+
+Track accuracy: Check if answers are correct vs docs.
+
+
+6. Databases
+
+Q: What’s the difference between SQL and NoSQL?
+Definition:
+
+SQL (Structured Query Language): Stores structured, tabular data.
+
+NoSQL: Stores flexible, unstructured data like JSON.
+
+Example:
+
+SQL (Postgres): Store user details → name, email, password.
+
+NoSQL (MongoDB): Store chat history → {"user": "santhosh", "message": "hi"}.
+
+Vector DB (Pinecone/Weaviate): Store embeddings → numerical vectors like [0.12, 0.88, -0.54].
+
+
+
+7. LLM APIs
+
+Q: How to integrate OpenAI/Anthropic APIs?
+Definition:
+You send a prompt (text) → API → LLM generates response → API sends it back.
+
+Example:
+
+import openai
+response = openai.ChatCompletion.create(
+  model="gpt-4",
+  messages=[{"role": "user", "content": "Explain RAG"}]
+)
+print(response.choices[0].message["content"])
+
+8. Simple System Design
+
+Q: Design a chatbot with RAG.
+Definition:
+System design = high-level architecture (how components talk to each other).
+
+Example Flow:
+
+User → API (FastAPI)
+
+API → Vector DB (Pinecone) → retrieves documents
+
+API → LLM (OpenAI/Gemini) → uses documents + query
+
+LLM → returns final answer to user
+
+This is scalable chatbot architecture.
+
+9. LangChain
+
+Q: What is LangChain?
+Definition:
+LangChain is a framework to connect LLMs, databases, and APIs easily.
+
+Example:
+Without LangChain → You must write 50+ lines for embeddings, retrieval, generation.
+With LangChain → Just 10 lines → load_docs → embed → retriever → LLMChain.
+
+
+10. Product Thinking
+
+Q: How will you build an FAQ bot for a company?
+Answer Example:
+
+Collect company FAQs.
+
+Convert FAQs into embeddings → store in Pinecone.
+
+Build RAG pipeline → query + context → LLM → answer.
+
+Deploy with FastAPI + Docker.
+
+Monitor accuracy and latency.
+
+11. Why is FastAPI better than Flask for microservices?
+
+Built-in async support (handles more requests faster).
+
+Auto docs (Swagger UI) → helps in testing APIs.
+
+Type hints → less bugs.
+Example: In a chatbot API, FastAPI can handle 1000 concurrent requests better than Flask.
+
+
+
+12. How would you store and query embeddings?
+
+Convert text → embeddings (numerical vectors).
+
+Store in Pinecone/Weaviate/pgvector.
+
+At query time → generate embedding of user query → find top-k similar vectors → feed into LLM.
+Example: For a news FAQ bot, store all news articles as embeddings → retrieve relevant context when user asks.
+
+
+13. How do you monitor GenAI in production?
+
+Latency: Check response time.
+
+Accuracy: Track % of correct answers.
+
+Cost: Monitor token usage.
+Example: If chatbot answers start drifting, use monitoring dashboards (Prometheus/Grafana or LangSmith).
+-----------------------------------------------------------------------------------------------------------------------
+System Design & Problem Solving
+-----------------------------------------------------------------------------------------------------------------------
+Q : Design a system for a company FAQ chatbot ?
+
+Frontend → User asks question.
+
+Backend (FastAPI) → receives query.
+
+Vector DB (Pinecone) → retrieves relevant FAQs.
+
+LLM (OpenAI/Gemini) → combines context + query → generates answer.
+
+Deployment → Wrap in Docker, scale with Kubernetes.
+
+Monitoring → Track latency, cost, and feedback.
+
+User → FastAPI → Vector DB → LLM API → Response
+
+Q : Suppose LLM gives a wrong answer. How will you fix it?
+
+Improve prompt (e.g., add system instructions).
+
+Add better context (expand documents in vector DB).
+
+Use evaluation pipeline → measure answer correctness → fine-tune if needed.
+Example: If FAQ bot says refund policy = “10 days” but correct = “30 days”, check vector DB content and retrain retrieval.
+
+

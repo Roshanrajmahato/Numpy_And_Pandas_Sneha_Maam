@@ -1,0 +1,9 @@
+num= int(input("Enter ]" \
+"
+
+
+
+
+
+
+"))

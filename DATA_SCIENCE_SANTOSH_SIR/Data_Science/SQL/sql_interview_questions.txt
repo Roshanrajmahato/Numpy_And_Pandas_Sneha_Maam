@@ -1,0 +1,124 @@
+Basic Level:
+----------------------------------------------
+What is SQL and what are its different types?
+
+SQL (Structured Query Language) is used for managing and manipulating relational databases. The different types of SQL commands are:
+DDL (Data Definition Language): CREATE, ALTER, DROP
+DML (Data Manipulation Language): SELECT, INSERT, UPDATE, DELETE
+DCL (Data Control Language): GRANT, REVOKE
+TCL (Transaction Control Language): COMMIT, ROLLBACK, SAVEPOINT
+
+Explain the difference between DELETE and TRUNCATE.
+
+DELETE: Removes rows based on a condition, can be rolled back, slower, and maintains table structure.
+TRUNCATE: Removes all rows from a table, cannot be rolled back, faster, and resets table identity values.
+
+
+What are JOINs in SQL? Explain the different types of joins.
+
+JOINs are used to retrieve data from multiple tables based on related columns.
+INNER JOIN: Returns matching rows between tables.
+LEFT JOIN: Returns all rows from the left table and matching rows from the right.
+RIGHT JOIN: Returns all rows from the right table and matching rows from the left.
+FULL JOIN: Returns all rows when there is a match in either table.
+CROSS JOIN: Returns a Cartesian product of both tables.
+
+
+How do you write a query to retrieve all records from a table?
+
+SELECT * FROM table_name;
+
+What is the purpose of GROUP BY and ORDER BY in SQL?
+
+GROUP BY: Groups rows that have the same values in specified columns.
+ORDER BY: Sorts the result set by one or more columns in ascending (ASC) or descending (DESC) order.
+
+How do you use LIKE in SQL queries?
+
+LIKE is used to search for a specified pattern in a column. Example: SELECT * FROM Employees WHERE name LIKE 'J%';
+
+What are primary keys and foreign keys in a database?
+
+Primary Key: A unique identifier for each record in a table.
+Foreign Key: A field in one table that references the primary key in another table, enforcing referential integrity.
+
+Explain the difference between NULL and NOT NULL constraints.
+
+NULL: Indicates that a column can store missing or undefined values.
+NOT NULL: Ensures a column must always have a value and cannot be empty.
+
+How do you create a table in SQL?
+
+CREATE TABLE Students (
+    ID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Age INT
+);
+
+What is the use of the DISTINCT keyword in SQL?
+
+DISTINCT is used to return only unique values from a column, removing duplicates. Example: SELECT DISTINCT department FROM Employees;
+
+Intermediate Level:
+---------------------------------------------------------
+How do you optimize SQL queries for better performance?
+
+Indexing, avoiding unnecessary columns in SELECT, using proper JOINs, limiting subqueries, using EXPLAIN to analyze query performance, and reducing complex calculations.
+
+Explain the use of subqueries and correlated subqueries.
+
+Subquery: A query within another query, executed once and passed to the outer query. Example: SELECT name FROM Employees WHERE salary > (SELECT AVG(salary) FROM Employees);
+Correlated Subquery: A subquery that depends on the outer query and is executed row by row.
+
+What are stored procedures and how are they different from functions in SQL?
+
+Stored Procedure: A reusable set of SQL statements that can perform actions like INSERT, UPDATE, and can return multiple result sets.
+Function: Returns a single value and can be used in SQL queries. It cannot modify database tables.
+
+How can you implement transactions in SQL? What is ACID property?
+
+Transactions in SQL are implemented using BEGIN TRANSACTION, COMMIT, and ROLLBACK.
+ACID properties ensure:
+Atomicity: All or nothing execution.
+Consistency: Database remains in a consistent state.
+Isolation: Transactions occur independently.
+Durability: Once committed, changes are permanent.
+
+What are indexes in SQL and how do they impact query performance?
+
+Indexes are used to speed up the retrieval of data. They work like a lookup table, reducing the amount of data scanned. However, they can slow down INSERT, UPDATE, and DELETE operations due to the overhead of updating the index.
+
+Explain the concept of normalization and its types (1NF, 2NF, 3NF, BCNF).
+
+Normalization is the process of organizing a database to minimize redundancy:
+1NF: Remove duplicate columns and ensure each cell holds atomic values.
+2NF: Ensure 1NF is met and eliminate partial dependencies.
+3NF: Ensure 2NF is met and remove transitive dependencies.
+BCNF: A stricter version of 3NF where every determinant is a candidate key.
+
+How would you retrieve data from multiple tables in a single SQL query?
+
+Using JOINs. Example:
+SELECT Employees.name, Departments.department_name
+FROM Employees
+INNER JOIN Departments ON Employees.department_id = Departments.id;
+
+What is the difference between HAVING and WHERE clause?
+
+WHERE filters rows before grouping them.
+HAVING filters groups after they are formed using GROUP BY.
+How do you use the CASE statement in SQL?
+
+The CASE statement is used for conditional logic in SQL. Example:
+SELECT name,
+CASE
+  WHEN salary > 10000 THEN 'High'
+  ELSE 'Low'
+END AS salary_grade
+FROM Employees;
+
+What are the different types of relationships in a database (one-to-one, one-to-many, many-to-many)?
+
+One-to-One: Each record in one table is related to a single record in another.
+One-to-Many: A record in one table can relate to multiple records in another.
+Many-to-Many: Records in both tables can relate to multiple records in the other table (usually implemented using a join table).

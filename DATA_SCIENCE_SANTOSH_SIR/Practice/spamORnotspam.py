@@ -1,0 +1,1 @@
+spam_words=["1cr","win",""]

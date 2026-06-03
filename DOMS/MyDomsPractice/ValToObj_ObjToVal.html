@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Form Console Demo</title>
+</head>
+<body>
+<!-- OBJECT Creation Of the Form Data From HTML DOCUMNET -->
+<!-- Then Getting Back The DATA From OBJECT To The HTML DOCUMENT -->
+<h2>User Details Form</h2>
+
+<form>
+
+    <label>Username:</label>
+    <input type="text" id="username" required>
+    <br><br>
+
+    <label>Password:</label>
+    <input type="password" id="password" required>
+    <br><br>
+
+    <label>Role:</label>
+    <input type="text" id="role" required>
+    <br><br>
+
+    <!-- Function written in button -->
+    <button type="button" onclick="showData()">Submit</button>
+
+</form>
+
+<h3>Entered Data:</h3>
+
+<p id="outUsername"></p>
+<p id="outPassword"></p>
+<p id="outRole"></p>
+
+<script>
+function showData() {
+
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+    let role = document.getElementById("role").value;
+
+    // Print values in console
+    console.log("Username:", username);
+    console.log("Password:", password);
+    console.log("Role:", role);
+
+    // Object format like your board example
+    let user = {
+        username: username,
+        password: password,
+        role: role
+    };
+
+    console.log("User Object:", user);
+    // Display using backticks (` `)
+    document.getElementById("outUsername").innerHTML = `Username: ${user.username}`;
+
+    document.getElementById("outPassword").innerHTML = `Password: ${user.password}`;
+
+    document.getElementById("outRole").innerHTML = `Role: ${user.role}`;
+}
+</script>
+
+</body>
+</html>

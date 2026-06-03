@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 1️⃣ Using Named Function -->
+    <!-- 
+    <div id="box" 
+        onmouseenter="hoverOn()" 
+        onmouseleave="hoverOff()"
+        style="width:200px;height:100px;background:lightgray;text-align:center;line-height:100px;">
+        Hover Over Me
+    </div>
+
+    <script>
+    const boxEle = document.getElementById("box");
+
+    function hoverOn() {
+        boxEle.style.backgroundColor = "green";
+        boxEle.innerHTML = "Mouse Entered";
+    }
+
+    function hoverOff() {
+        boxEle.style.backgroundColor = "lightgray";
+        boxEle.innerHTML = "Hover Over Me";
+    }
+    </script> 
+    -->
+
+    <!-- 2️⃣ Using Anonymous Function -->
+    <!-- 
+    <div id="box"
+        style="width:200px;height:100px;background:lightgray;text-align:center;line-height:100px;">
+        Hover Over Me
+    </div>
+
+    <script>
+    const boxEle = document.getElementById("box");
+
+    boxEle.onmouseenter = function () {
+        boxEle.style.backgroundColor = "blue";
+        boxEle.innerHTML = "Mouse Entered";
+    };
+
+    boxEle.onmouseleave = function () {
+        boxEle.style.backgroundColor = "lightgray";
+        boxEle.innerHTML = "Hover Over Me";
+    };
+    </script> 
+    -->
+
+
+    <!-- 3️⃣ Using Arrow Function -->
+    <!-- 
+    <div id="box"
+        style="width:200px;height:100px;background:lightgray;text-align:center;line-height:100px;">
+        Hover Over Me
+    </div>
+
+    <script>
+    const boxEle = document.getElementById("box");
+
+    boxEle.onmouseenter = () => {
+        boxEle.style.backgroundColor = "orange";
+        boxEle.innerHTML = "Mouse Entered";
+    };
+
+    boxEle.onmouseleave = () => {
+        boxEle.style.backgroundColor = "lightgray";
+        boxEle.innerHTML = "Hover Over Me";
+    };
+    </script> 
+    -->
+
+    <!-- 4️⃣ addEventListener + Arrow Function -->
+    <!--         
+    <div id="box"
+        style="width:200px;height:100px;background:lightgray;text-align:center;line-height:100px;">
+        Hover Over Me
+    </div>
+
+    <script>
+    const boxEle = document.getElementById("box");
+
+    boxEle.addEventListener("mouseenter", () => {
+        boxEle.style.backgroundColor = "purple";
+        boxEle.innerHTML = "Mouse Entered";
+    });
+
+    boxEle.addEventListener("mouseleave", () => {
+        boxEle.style.backgroundColor = "lightgray";
+        boxEle.innerHTML = "Hover Over Me";
+    });
+    </script>
+    -->
+
+
+    <!-- 5️⃣ Best Practice with Separate Styling ⭐ Best Styling Method (Cleanest & Real-World)-->
+    <!-- 
+    <div id="box"
+        style="width:200px;height:100px;background:lightgray;text-align:center;line-height:100px;">
+        Hover Over Me
+    </div>
+
+    <script>
+    const boxEle = document.getElementById("box");
+
+    boxEle.addEventListener("mouseenter", () => {
+        boxEle.style.backgroundColor = "black";
+        boxEle.style.color = "white";
+        boxEle.style.fontSize = "20px";
+        boxEle.innerHTML = "Welcome!";
+    });
+
+    boxEle.addEventListener("mouseleave", () => {
+        boxEle.style.backgroundColor = "lightgray";
+        boxEle.style.color = "black";
+        boxEle.style.fontSize = "16px";
+        boxEle.innerHTML = "Hover Over Me";
+    });
+    </script> 
+    -->
+
+
+</body>
+</html>

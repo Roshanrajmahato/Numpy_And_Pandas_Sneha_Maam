@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+
+    </style>
+</head>
+<body>
+    
+    <button onclick="newElement()">Click Here</button>
+
+    <script>
+
+        function newElement() {
+            
+            // Create div element
+        const divEle =document.createElement("div")  // creating a div Element  
+        const imgEle =document.createElement("img") // creating a img Element 
+        const paraEle=document.createElement("p") // creating a p Element 
+        const butEle=document.createElement("button") // creating a button Element 
+
+        imgEle.src="imagepath"
+        paraEle.textContent="asdfghjsdfghjklasdfghjklqwertyuizxcvbnm"
+        butEle="Add the Cart"
+
+
+        // Append Element 
+        document.body.append(divEle) // sending a div element to body of html
+        divEle.append(imgEle) // inside a div  , appending a imgEle (a img tag)
+        divEle.append(paraEle) // inside a div  , appending a paraEle (a p tag)
+        divEle.append(butEle) //  inside a div  , appending a butEle (a button tag)
+
+        // Adding attribute to the divEle have div
+        divEle.setAttribute("class","box")
+        divEle.setAttribute("id","item")
+    }
+
+        
+    </script>
+</body>
+</html>

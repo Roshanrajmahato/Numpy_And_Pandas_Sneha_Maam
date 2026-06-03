@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 🎯 Focus Event – onfocus & onblur (Anonymous Function) -->
+    <input type="text" id="focusInput" placeholder="Focus here" />
+
+    <script>
+      const focusInput = document.getElementById("focusInput");
+
+      focusInput.onmouseenter = function () {  // focusInput.onfocus || focusInput.onmouseenter 
+        focusInput.style.backgroundColor = "lightgreen";
+      };
+
+      focusInput.onmouseleave = function () {  // focusInput.onblur || ocusInput.onmouseleave
+        focusInput.style.backgroundColor = "blue";
+      };
+    </script>
+  </body>
+</html>

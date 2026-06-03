@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+
+     <!-- <h1 id="myclick">Click Me</h1>
+    <script>
+      const headEle = document.getElementById("myclick");
+      
+      headEle.onclick = function () {
+        headEle.innerHTML = `<h3 style="color:red;"> You Have Clicked Me...! </h3>`; // headEle.textContent
+      };
+    </script> 
+---------------------- -->
+
+    <h1 id="myclick">Click Me</h1>
+
+    <script>
+      const headEle = document.getElementById("myclick");
+
+      headEle.addEventListener("click", () => {
+        headEle.innerHTML = `<h3 style= "color:purple";> You Have Clicked Me...! </h3>`;
+      });
+    </script> 
+
+
+    </script> 
+  </body>
+</html>

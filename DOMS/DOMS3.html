@@ -1,0 +1,134 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .newStyle{
+        color: blue;
+    }
+    .changeStyle{
+        color: crimson;
+        font-size: 2.5rem;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+</style>
+
+<body>
+
+    <!-- getElementsByClassName -->
+    <input type="text" name="" id=""  class="userInp"><br><br>
+    <input type="text" name="" id="" class="userInp"><br><br>
+    <input type="text" name="" id="" class="userInp"><br><br>
+    <button onclick="getUserData()">ADD</button>
+    <h1>Entered Name : <span id="res"> </span></h1>
+    <script>
+        const getUserData = ()=>{
+            const allInputs=document.getElementsByClassName("userInp")
+            const resEle=document.getElementById("res")
+            console.log(allInputs)
+            for(let i of allInputs){
+                console.log(i.value)
+                resEle.textContent += i.value + " "
+            }
+
+
+        }
+
+
+    </script>
+    <!-- getElementByTagName -->>
+    <p>
+        1st paragraph paragraph
+    </p>
+    <p>
+        2nd paragraph paragraph
+    </p>
+    <p>
+        3rd paragraph paragraph
+    </p>
+    <p>
+        4th paragraph paragraph
+    </p>
+    <p>
+       5 th paragraph
+    </p>
+    <button onclick="addStyle">click here</button>
+    <script>
+        const addStyle=()=>{
+            const allPara=document.getElementsByTagName("p")
+            for(let i of allPara){
+                i.style.color="red"
+                i.style.fontSize="3rem"
+            }
+        }
+    </script>
+    <hr>
+    <!-- getElementByName() -->
+    <p>Choose Your Gender </p>
+    <input type="radio" name="" id=""><label for="">Male</label>
+    <input type="radio" name="" id=""><label for="">Female</label>
+    <input type="radio" name="" id=""><label for="">Others</label>
+    <br><br>
+    <button>Count</button>
+    <p>Number of Gender: <strong> </strong></p>
+    <script>
+        const count=()=>{
+            const allName=document.getElementsByName()
+            const length=allName.length()
+        }
+    </script>
+    <!-- diff getelem entbyid vs queryslector-->
+
+
+     <!-- querySelector-->
+
+
+     <div class="one">
+        <h1>Roshysdgfghskhdwklldlllfllg</h1>
+        <h1>mnbvcccccxzlkjhgfdspoiuytre</h1>
+     </div>
+     <div id="two">
+        <h1 class="newStyle">sdfghjkl;</h1>
+        <h1 class="newStyle">sdfghjkl;</h1>
+        <h1 class="newStyle">sdfghjkl;</h1>
+        <h1 class="newStyle">sdfghjkl;</h1>
+        <h1 class="newStyle">sdfggtrjhghhhhkl;</h1>
+
+     </div>
+     <button onclick="firstMatching()">querySelector</button>
+     <button onclick="removeStyle()"> Remove Style</button>
+     <button onclick="allMatching()">querySelectorAll</button>
+     <button onclick="removeAllStyle()">Remove Style</button>
+     <script>
+        const firstElement=document.querySelector(".one>h1")
+        const allElements=document.querySelectorAll("#two h1")
+
+        const firstMatching=function(){
+            console.log(firstElement)
+            firstElement.classList.add("newStyle")
+        }
+        const removeStyle=function(){
+            firstElement.classList.remove("newStyle")
+        }
+        const allMatching=function(){
+            console.log(allElements)
+            for (let i of allElements ){
+                i.classList.replace("newStyle","changeStyle")
+            }
+        }
+        const removeAllStyle=function(){
+            for(let i of allElements){
+                i.classList.toggle("changeStyle")
+
+            }
+        }
+
+     </script>
+
+    <!-- fetching the api  -->
+
+</body>
+</html>

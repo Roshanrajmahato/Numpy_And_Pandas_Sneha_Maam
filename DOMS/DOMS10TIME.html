@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img{
+            width: 30%;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <button id="btn">Show</button><br>
+    
+    <div class="my-image">
+        <img src="pexels-anthony-794494.jpg" alt="">
+    </div>
+
+    <!-- Q. settimeout() -> only one time it execute the function which inside  -->
+    <!-- Q. setinterval() -> Multiple time it execute the function which inside   -->
+    <script>
+        const imgEle=document.querySelector("img")
+        const btnEle=document.querySelector("#btn")
+        // No Delay
+        // btnEle.onclick=function(){
+        //     imgEle.style.visibility="visible"
+        // }
+
+        // Show Image After a Delay of 4000ms 
+        btnEle.onclick=function(){
+            setTimeout(()=>{
+                imgEle.style.visibility="visible"
+            },4000)
+        }
+    </script>
+    <hr>
+    <button id="btn-two">ShowTick</button>
+    <script>
+        document.querySelector("#btn-two").onclick=function(){
+            setInterval(tickTick,1000)
+            let tick =0
+            function tickTick(){
+                console.log(tick++)
+            }
+        }
+    </script>
+</body>
+</html>

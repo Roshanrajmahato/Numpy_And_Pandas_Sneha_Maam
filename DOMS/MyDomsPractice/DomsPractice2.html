@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <!-- 1️⃣ Using Named Function -->
+    <!-- 
+    <button onclick="singleClick()" 
+            ondblclick="doubleClick()" 
+            id="myBtn">
+        Click or Double Click Me
+    </button>
+
+    <script>
+    const btnEle = document.getElementById("myBtn");
+
+    function singleClick() {
+        btnEle.innerHTML = "Single Click Done";
+        btnEle.style.backgroundColor = "lightblue";
+    }
+
+    function doubleClick() {
+        btnEle.innerHTML = "Double Click Done";
+        btnEle.style.backgroundColor = "orange";
+    }
+    </script> 
+    -->
+
+    <!-- 2️⃣ Using Anonymous Function -->
+    <!-- 
+    <button id="myBtn">
+        Click or Double Click Me
+    </button>
+
+    <script>
+    const btnEle = document.getElementById("myBtn");
+
+    btnEle.onclick = function () {
+        btnEle.innerHTML = "Single Click Done";
+        btnEle.style.backgroundColor = "lightgreen";
+    };
+
+    btnEle.ondblclick = function () {
+        btnEle.innerHTML = "Double Click Done";
+        btnEle.style.backgroundColor = "pink";
+    };
+    </script> 
+    -->
+
+    <!-- 3️⃣ Using Arrow Function -->
+    <!-- 
+    <button id="myBtn">
+        Click or Double Click Me
+    </button>
+
+    <script>
+    const btnEle = document.getElementById("myBtn");
+
+    btnEle.onclick = () => {
+        btnEle.innerHTML = "Single Click Done";
+        btnEle.style.backgroundColor = "yellow";
+    };
+
+    btnEle.ondblclick = () => {
+        btnEle.innerHTML = "Double Click Done";
+        btnEle.style.backgroundColor = "red";
+    };
+    </script> 
+    -->
+
+    <!-- 4️⃣ ⭐ Best Practice — addEventListener + Arrow Function -->
+    <!-- 
+    <button id="myBtn">
+        Click or Double Click Me
+    </button>
+
+    <script>
+    const btnEle = document.getElementById("myBtn");
+
+    btnEle.addEventListener("click", () => {
+        btnEle.innerHTML = "Single Click Done";
+        btnEle.style.backgroundColor = "purple";
+        btnEle.style.color = "white";
+    });
+
+    btnEle.addEventListener("dblclick", () => {
+        btnEle.innerHTML = "Double Click Done";
+        btnEle.style.backgroundColor = "black";
+        btnEle.style.color = "white";
+    });
+    </script> 
+
+    -->
+    
+    <!-- 5️⃣ ⭐ Best Styled Version (Cleanest & Most Realistic) -->
+    <!-- 
+    <button id="myBtn"
+            style="padding:10px 20px; font-size:16px; cursor:pointer;">
+        Click or Double Click Me
+    </button>
+
+    <script>
+    const btnEle = document.getElementById("myBtn");
+
+    btnEle.addEventListener("click", () => {
+        btnEle.innerHTML = "Single Click Done ✔";
+        btnEle.style.backgroundColor = "green";
+        btnEle.style.color = "white";
+    });
+
+    btnEle.addEventListener("dblclick", () => {
+        btnEle.innerHTML = "Double Click Done ⭐";
+        btnEle.style.backgroundColor = "darkred";
+        btnEle.style.color = "white";
+    });
+    </script> 
+    -->
+
+</body>
+</html>

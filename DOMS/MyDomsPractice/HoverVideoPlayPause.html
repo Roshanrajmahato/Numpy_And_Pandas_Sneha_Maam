@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+      video {
+        width: 30%;
+        height: 10%;
+      }
+    </style>
+</head>
+<body>
+    <video src="VideoForDemo.mp4" id="my-video" muted width="400"></video>
+
+    <script>
+      const videoEle = document.querySelector("#my-video");
+
+      // Play video
+      videoEle.addEventListener("mouseenter", () => {
+        videoEle.play();
+      });
+
+      // Pause video
+      videoEle.addEventListener("mouseleave", () => {
+        videoEle.pause();
+      });
+    </script> 
+</body>
+</html>

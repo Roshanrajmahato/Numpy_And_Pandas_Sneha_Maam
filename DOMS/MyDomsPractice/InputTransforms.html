@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 id="js">JavaScript feeling like tough ..</h1>
+    <button onclick="textTransform()">Tranform</button><br><br>
+    <input type="text" id="res">
+    <script>
+        function textTransform(){
+            const text = document.getElementById("js").textContent
+            const inEle = document.getElementById("res")
+            inEle.value=text
+        }
+    </script> 
+</body>
+</html>

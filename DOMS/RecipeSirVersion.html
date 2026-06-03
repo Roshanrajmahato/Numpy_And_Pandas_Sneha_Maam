@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recipe App</title>
+
+    <style>
+
+        .search-prod {
+            height: 50px;
+            width: 500px;
+            /* background-color: aqua; */
+            border: 0.5px gray solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 100px;
+            padding: 6px;
+            position: relative;
+            top: 50px;
+        }
+
+        .search-prod > input {
+            border-radius: 100px;
+            border: none;
+            outline: none;
+            height: 100%;
+            width: 100%;
+            font-size: 1.2rem;
+            padding-left: 20px;
+            font-family: Georgia, "Times New Roman";
+        }
+
+        .bi-search {
+            position: absolute;
+            right: 30px;
+            font-size: 27px;
+        }
+
+        .prod {
+            height: 400px;
+            width: 350px;
+            background-color: gainsboro;
+        }
+
+        .prod img {
+            width: 80%;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="main">
+
+    <div class="search-prod">
+        <input type="text" name="" id="recipe-name" placeholder="Search Recipe">
+        <i class="bi bi-search"></i>
+    </div>
+
+    <div class="all-prod">
+        <!-- Recipes will load here -->
+    </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    fetch("https://dummyjson.com/recipes")
+
+    .then((resp) => {
+
+        if (!resp.ok) {
+            console.log("Server is not responding");
+        } else {
+            return resp.json();
+        }
+
+    })
+    .then((data) => {
+
+        // console.log(data)
+        // console.log(data.recipes)
+
+        for (let recipe of data.recipes) {
+
+            // console.log(recipe)
+
+            document.querySelector(".all-prod").innerHTML += `
+
+                <div class="prod">
+                    <span>${recipe.name}</span> <br>
+                    <img src="${recipe.image}"> <br>
+                    <p>${recipe.ingredients.join()}</p>
+                </div>
+
+            `;
+        }
+
+    })
+    .catch((err) => {
+        console.log("Error found");
+    });
+
+});
+
+</script>
+
+</body>
+</html>

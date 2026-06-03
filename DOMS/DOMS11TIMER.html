@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      .timer {
+        height: 400px;
+        width: 500px;
+        background: linear-gradient(gray, gainsboro);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      h1 {
+        font-family: "DigitalGalaxy", "Times New Roman", Times, serif;
+        font-size: 4rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="timer">
+      <h1>
+        <span id="hr">00</span>: <span id="min">00</span>:
+        <span id="sec">00</span>
+      </h1>
+
+      <div class="btns">
+        <button>Start</button>
+        <button>Stop</button>
+        <button>Reset</button>
+      </div>
+    </div>
+
+    <script>
+      const startBtn = document.querySelector(".btns>button:nth-child(1)");
+      const stopBtn = document.querySelector(".btns>button:nth-child(2)");
+      const resetBtn = document.querySelector(".btns>button:nth-child(3)");
+      let hour = document.querySelector("#hr");
+      let minute = document.querySelector("#min");
+      let second = document.querySelector("#sec");
+
+      console.log(startBtn, stopBtn, resetBtn);
+
+      // Start timer
+      let seconds = 0;
+      let minutes = 0;
+      let hours = 0;
+
+      let timer = null;
+
+      // Start Timer
+      startBtn.onclick = function () {
+        if (timer !== null) return;
+
+        timer = setInterval(() => {
+          ++seconds;
+
+          second.textContent = seconds <= 9 ? "0" + seconds : seconds;
+
+          if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
+
+            minute.textContent = minutes <= 9 ? "0" + minutes : minutes;
+
+            if (minutes > 59) {
+              minutes = 0;
+              hours++;
+
+              hour.textContent = hours <= 9 ? "0" + hours : hours;
+            }
+          }
+        }, 1000);
+      };
+
+      // Stop Timer
+      stopBtn.onclick = function () {
+        clearInterval(timer);
+        timer = null;
+      };
+
+      // Reset Timer
+      resetBtn.onclick = function () {
+        clearInterval(timer);
+        timer = null;
+
+        seconds = 0;
+        minutes = 0;
+        hours = 0;
+
+        second.textContent = "00";
+        minute.textContent = "00";
+        hour.textContent = "00";
+      };
+      startBtn.onclick = function () {};
+    </script>
+  </body>
+</html>

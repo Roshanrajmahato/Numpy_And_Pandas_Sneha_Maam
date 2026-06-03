@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      video {
+        width: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 
+    .. Event Handelar or Event handingling :- We calling a function by Event Handler or Event Handanling
+    
+    . Event :- Fuction written inside a js(All the function) which have some task and behaviour
+    
+    Event :- Function
+    Event Handalar :- Function Handalar
+    Type Of Fuction Handalar or Event handalar :-
+    1. Mouse events :- onclick,ondbclick 
+    2. Keyboard events :- onkeydown,
+    3. Form events :- onsubmit
+    4. Focus events :- onfocus,
+    5. Window events :- onload,onscroll,onsize
+
+    -->
+    <!-- Method 1 -->
+    <!-- <h1 onclick="ChangedContent(event)"> Click here to change content </h1> event object send by brower -->
+    <h1>Click here to change content</h1>
+    <!-- event object send by brower-->
+
+    <script>
+      // function ChangedContent(event){
+
+      //     document.querySelector("h1").textContent="Yess....You..Clicked One time"
+      //     // Aspect of event handling
+      //     console.log(event.target)  // target :- html element
+      //     console.log(event.type)   // type :- Types of events handlers -> click,dbclick
+      //                              // event listeners -> function
+
+      // }
+      // // Method 2 Event Listener
+      // let headEle = document.querySelector("h1")
+      // headEle.addEventListener("dblclick",()=>{
+      //     headEle.textContent="yesss..... you clicked twice times"
+      // })
+
+      // Method 3
+
+      let headEle = document.querySelector("h1");
+      headEle.onclick = () => {
+        headEle.innerHTML = "Yes......You Clicked one time";
+      };
+    </script>
+
+    <hr />
+    <video src="3403453-uhd_2160_4096_25fps.mp4" id="my-video" muted></video>
+    <script>
+      const videoEle = document.querySelector("#my-video");
+
+      // Playing Video
+      videoEle.onmouseenter = playvideo;
+      function playvideo() {
+        videoEle.play();
+      }
+      // Pause Video
+      videoEle.onmouseleave = pausevideo;
+      function pausevideo() {
+        videoEle.pause();
+        
+      }
+    </script>
+  </body>
+</html>

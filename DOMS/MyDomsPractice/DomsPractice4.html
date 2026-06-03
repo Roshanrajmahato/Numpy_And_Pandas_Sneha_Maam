@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 1️⃣ Using Name Function( function() declaration and its Function Name also  ) -->
+    <!--  
+    <video src="VideoForDemo.mp4" id="my-video" muted width="400"></video>
+
+    <script>
+      const videoEle = document.querySelector("#my-video");
+
+      // Playing Video using addEventListener
+      videoEle.addEventListener("mouseenter", playVideo);
+
+      function playVideo() {
+        videoEle.play();
+      }
+
+      // Pause Video using addEventListener
+      videoEle.addEventListener("mouseleave", pauseVideo);
+
+      function pauseVideo() {
+        videoEle.pause();
+      }
+    </script> 
+    -->
+
+    <!-- 2️⃣ Using Anonymous Function(No Name Given To a Function Only Keyword function()  ) -->
+    <!-- 
+    <video src="VideoForDemo.mp4" id="my-video" muted width="400"></video>
+
+    <script>
+      const videoEle = document.querySelector("#my-video");
+
+      // Play Video (anonymous function)
+      videoEle.addEventListener("mouseenter", function () {
+        videoEle.play();
+      });
+
+      // Pause Video (anonymous function)
+      videoEle.addEventListener("mouseleave", function () {
+        videoEle.pause();
+      });
+    </script>
+    -->
+
+    <!-- 3️⃣ Using Arrow Function(No function keyword , Not its Name also  ) -->
+    <!-- 
+    <video src="VideoForDemo.mp4" id="my-video" muted width="400"></video>
+
+    <script>
+      const videoEle = document.querySelector("#my-video");
+
+      // Play video
+      videoEle.addEventListener("mouseenter", () => {
+        videoEle.play();
+      });
+
+      // Pause video
+      videoEle.addEventListener("mouseleave", () => {
+        videoEle.pause();
+      });
+    </script> 
+    -->
+  </body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 1️⃣ Using Name Function( function() declaration and its Function Name also  ) -->
+    <!--    
+    <h1 onclick="changeText()" id="myclick">Click Me</h1>
+
+    <script>
+      const headEle = document.getElementById("myclick");
+
+      function changeText() {
+        headEle.innerHTML = `<h3 style="color:red;"> You Have Clicked Me...! </h3>`; // headEle.textContent
+      }
+    </script> 
+    -->
+   
+    <!-- 2️⃣ Using Anonymous Function(No Name Given To a Function Only Keyword function()  ) -->
+    <!-- 
+    <h1 id="myclick">Click Me</h1>
+    <script>
+      const headEle = document.getElementById("myclick");
+      
+      headEle.onclick = function () {
+        headEle.innerHTML = `<h3 style="color:red;"> You Have Clicked Me...! </h3>`; // headEle.textContent
+      };
+    </script> 
+    -->
+
+    <!-- 3️⃣ Using Arrow Function(No function keyword , Not its Name also  ) -->
+    <!-- 
+    <h1 id="myclick">Click Me</h1>
+
+    <script>
+      const headEle = document.getElementById("myclick");
+
+      headEle.onclick = () => {
+        headEle.innerHTML = `<h3 style="color:red;"> You Have Clicked Me...! </h3>`; // headEle.textContent
+      };
+    </script> 
+    -->
+
+    <!-- 4️⃣ (Best Practice) Using addEventListener + Arrow Function ⭐ -->
+    <!--      
+    <h1 id="myclick">Click Me</h1>
+
+    <script>
+      const headEle = document.getElementById("myclick");
+
+      headEle.addEventListener("click", () => {
+        headEle.innerHTML = `<h3 style= style= "color:purple";> You Have Clicked Me...! </h3>`;
+      });
+    </script> 
+    -->
+    <!-- 5️⃣ (Best Practice For Style) Using addEventListener + Arrow Function ⭐ -->
+    <!-- 
+    <h1 id="myclick">Click Me</h1>
+
+    <script>
+      const headEle = document.getElementById("myclick");
+
+      headEle.addEventListener("click", () => {
+            headEle.style.backgroundColor = "red";
+            headEle.style.color = "purple";
+            headEle.innerHTML = "You Have Clicked Me...!";
+      });
+    </script> 
+    -->
+  </body>
+</html>

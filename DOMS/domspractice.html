@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- #️⃣ Event  -->
+    <!-- 1️⃣ Button Event  -->
+    <button id="btn">Click Me</button>
+
+    <script>
+      const btn = document.getElementById("btn");
+
+      btn.addEventListener("click", function (event) {
+        console.log(event);
+      });
+    </script>
+
+    <!-- 2️⃣ Button Event Object Properties  -->
+    <!-- 
+    <button id="btn">Click Me</button>
+    <script>
+        const btn=document.getElementById("btn");
+        btn.addEventListener("click",function(event){
+            console.log("Event Type:",event.type)
+            console.log("Target Element:",event.target)
+            console.log("Mouse X:",event.clientX)
+            console.log("Mouse Y:",event.clientY)
+        })
+    </script> -->
+
+    <!-- 3️⃣ Keyboard Event Object Properties -->
+
+    <!-- <input type="text" name="" id="inputBox" placeholder="Press Key">
+    <script>
+
+        document.addEventListener("DOMContentLoaded",function(){
+            const input=document.getElementById("inputBox")
+            input.addEventListener("keyup",function(event){
+                console.log(event);
+                console.log("Key Pressed:",event.key);
+                console.log("Key Code:",event.code)
+                console.log("Key Present Element:",event.target)
+            })
+        })
+    </script> -->
+
+    <!-- 4️⃣ Form Event -->
+    <!-- <form id="myForm">
+      <input type="text" />
+      <button type="submit">Submit</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("myForm");
+
+      form.addEventListener("submit", function (event) {
+        console.log(event);
+        event.preventDefault();
+      });
+    </script> -->
+
+
+    <!-- 5️⃣ Mouse Move Event -->
+    <!-- <div style="height: 200px; background: lightgray" id="box">
+      Move mouse here
+    </div>
+
+    <script>
+      const box = document.getElementById("box");
+
+      box.addEventListener("mousemove", function (event) {
+        console.log("X:", event.clientX, "Y:", event.clientY);
+      });
+    </script> -->
+
+    <!-- <h1 onclick="changeText(event)">Click Me </h1>
+    <script>
+        console.log(event)
+        function changeText(event){
+            event.target.innerHTML="You Clicked Me"
+        }
+    </script> -->
+  </body>
+</html>

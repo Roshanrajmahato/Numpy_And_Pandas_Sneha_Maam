@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Recipe App</title>
+
+<!-- 🎯 FEATURES ADDED
+
+1️⃣ Live Search
+Type → recipes filter instantly,No page reload
+
+2️⃣ Better UI
+Cards,Hover effect,Clean layout
+
+3️⃣ Click to View Details
+Shows:-
+Ingredients,Instructions,Image,Close button
+
+ -->
+
+<style>
+
+/* ===== Search Box ===== */
+.search-prod {
+    height: 50px;
+    width: 500px;
+    border: 1px gray solid;
+    display: flex;
+    align-items: center;
+    border-radius: 100px;
+    padding: 6px;
+    position: relative;
+    margin: 20px auto;
+}
+
+.search-prod input {
+    border: none;
+    outline: none;
+    height: 100%;
+    width: 100%;
+    font-size: 1.1rem;
+    padding-left: 20px;
+}
+
+/* ===== Recipe Grid ===== */
+.all-prod {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+/* ===== Card ===== */
+.prod {
+    width: 300px;
+    background: #f2f2f2;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.prod:hover {
+    transform: scale(1.03);
+}
+
+.prod img {
+    width: 90%;
+    border-radius: 10px;
+}
+
+/* ===== Details Box ===== */
+#detailBox {
+    width: 60%;
+    margin: 20px auto;
+    padding: 15px;
+    background: #e3e3e3;
+    display: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="search-prod">
+    <input type="text" id="search" placeholder="Search Recipe...">
+</div>
+
+<div id="detailBox"></div>
+
+<div class="all-prod"></div>
+
+
+<script>
+
+let allRecipes = [];
+
+document.addEventListener("DOMContentLoaded", loadData);
+
+function loadData() {
+    fetch("https://dummyjson.com/recipes")
+    .then(r => r.json())
+    .then(data => {
+        allRecipes = data.recipes;
+        showRecipes(allRecipes);
+    });
+}
+
+function showRecipes(recipes) {
+
+    let box = document.querySelector(".all-prod");
+    box.innerHTML = "";
+
+    recipes.forEach(recipe => {
+
+        box.innerHTML += `
+        <div class="prod" onclick="showDetail(${recipe.id})">
+            <h3>${recipe.name}</h3>
+            <img src="${recipe.image}">
+            <p>⭐ Rating: ${recipe.rating}</p>
+            <p>Cuisine: ${recipe.cuisine}</p>
+        </div>
+        `;
+    });
+}
+
+/* ===== Search Logic ===== */
+document.getElementById("search").addEventListener("keyup", (e) => {
+
+    let value = e.target.value.toLowerCase();
+
+    let filtered = allRecipes.filter(r =>
+        r.name.toLowerCase().includes(value)
+    );
+
+    showRecipes(filtered);
+});
+
+/* ===== Single Recipe Detail ===== */
+function showDetail(id) {
+
+    let recipe = allRecipes.find(r => r.id == id);
+
+    let box = document.getElementById("detailBox");
+
+    box.style.display = "block";
+
+    box.innerHTML = `
+        <h2>${recipe.name}</h2>
+        <img src="${recipe.image}" width="200">
+
+        <h3>Ingredients</h3>
+        <p>${recipe.ingredients.join(", ")}</p>
+
+        <h3>Instructions</h3>
+        <p>${recipe.instructions.join(". ")}</p>
+
+        <button onclick="closeBox()">Close</button>
+    `;
+}
+
+function closeBox() {
+    document.getElementById("detailBox").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>

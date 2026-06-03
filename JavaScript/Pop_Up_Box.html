@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+        function alertUser(){
+            alert("Welcome to Advance javaScript")
+        }
+
+    </script>
+
+    <h1>Pop Up Box</h1>
+    <hr>
+    <h2>alert()</h2>
+    <button onclick="alertUser()">Click Me</button>
+
+    <hr>
+    <h2>Confirm</h2>
+    <button onclick="saveUserData('Roshan')">Save Data</button>
+    <script>
+        const saveUserData = (user) =>{
+            let userResp =confirm(`${user},Do You Want to save data ?`)
+            console.log("User Response",userResp)
+            if(userResp){
+                localStorage.setItem("Username","Roshan")
+                console.log("Yout Data Saved")
+            }else{
+                console.log("Your Data Not Sava")
+            }
+
+        }
+    </script>
+
+    <hr>
+    <h2>Prompt</h2>
+    <button onclick="getUserData()">Get User Data</button>
+    <script>
+        function getUserData(){
+            let userData =prompt("Enter Your Name: ","Pyspider")
+            console.log(userData)
+        }
+    </script>
+
+
+</body>
+</html>

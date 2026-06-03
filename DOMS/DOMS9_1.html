@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#para{
+    height:150px;
+    width:400px;
+    overflow:auto;
+    border:2px solid black;
+}
+</style>
+</head>
+
+<body onload="alert('Page is loaded Success')">
+
+<p id="para">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque tempore necessitatibus architecto, 
+        ullam error a eos repellendus rem accusamus nulla impedit iusto quaerat delectus facilis harum asperiores
+        dolore quis aut, quam non. Et aspernatur quos itaque accusamus tempore eius, quod officia eum. Aliquid unde
+        sequi soluta, quibusdam veniam tempora doloribus cum tenetur ratione similique harum velit deleniti minus non 
+        asperiores, in animi placeat libero dicta! Earum delectus quasi praesentium amet 
+        illo vel, expedita, quam enim, quo ullam doloremque ratione molestias impedit aliquid incidunt corrupti sunt 
+        veniam? Accusamus alias eum ab minus quia hic similique aut illum officia totam magnam, mollitia adipisci soluta 
+        temporibus tempora vitae! Adipisci possimus id doloribus quisquam quam ea officia ratione doloremque. Fugit error 
+        laborum quo est repudiandae, voluptate voluptates ut enim hic voluptatem culpa, asperiores recusandae accusamus, 
+        architecto officia numquam cumque dolorem dolorum commodi quasi suscipit sit consequatur corporis. Assumenda incidunt
+        corporis consequatur veritatis saepe velit, hic consequuntur soluta? Rem, accusantium. Rem, accusantium ad dignissimos
+        repudiandae voluptas facere eum hic accusamus nostrum harum nesciunt, et amet eligendi eos maiores culpa, quo temporibus!
+        Dolor quae error recusandae libero deserunt adipisci incidunt iusto optio fuga, ducimus quidem consequuntur cupiditate quasi 
+        animi maiores deleniti sunt minima voluptatem sit impedit.
+</p>
+
+<span id="res"></span>
+
+<script>
+    const paraEle = document.querySelector("#para");
+    let count = 0;
+
+    paraEle.onscroll = function(){
+        console.log("Scrolled:", count++);
+    };
+
+    const resEle = document.getElementById("res");
+
+    window.onresize = function(){
+        let height = window.innerHeight;
+        let width = window.innerWidth;
+
+        resEle.innerHTML = `Height: ${height} | Width: ${width}`;
+    };
+</script>
+
+</body>
+</html>

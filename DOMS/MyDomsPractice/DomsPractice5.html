@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Medium Level DOM Example</title>
+</head>
+
+<body>
+
+  <h2 id="title">Hover on Image</h2>
+
+  <img 
+    src="https://picsum.photos/id/237/200/200" 
+    id="my-img" 
+    width="200"
+  >
+
+  <p id="output"></p>
+
+  <script>
+    const imgEle = document.querySelector("#my-img");
+    const titleEle = document.querySelector("#title");
+    const outputEle = document.querySelector("#output");
+
+    // Change image when mouse enters
+    imgEle.addEventListener("mouseenter", function () {
+      imgEle.src = "https://picsum.photos/id/238/200/200";
+      titleEle.textContent = "Mouse Entered Image";
+    });
+
+    // Restore image when mouse leaves
+    imgEle.addEventListener("mouseleave", function () {
+      imgEle.src = "https://picsum.photos/id/237/200/200";
+      titleEle.textContent = "Hover on Image";
+    });
+
+    // Show message when image is clicked
+    imgEle.addEventListener("click", function () {
+      outputEle.innerHTML = `You clicked the image!`;
+    });
+
+  </script>
+
+</body>
+</html>

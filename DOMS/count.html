@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head> 
+<body>
+    <h2 id="para">0</h2>
+    <button id="incre">+</button>
+    <button id="decre">-</button>
+    <button id="reset">reset</button>
+
+    <script>
+        const para=document.getElementById("para")
+        const incre=document.getElementById("incre")
+        const decre=document.getElementById("decre")
+        const reset=document.getElementById("reset")
+
+        val=0
+        incre.addEventListener("click",function(){
+            val++
+            para.innerHTML=`<h2>${val}</h2>`
+
+        })
+        decre.addEventListener("click",function(){
+            val--
+            para.innerHTML=`<h2>${val}</h2>`
+        })
+        reset.addEventListener("click",function(){
+            val=0
+
+        })
+
+
+
+
+    </script>
+
+</body>
+</html>

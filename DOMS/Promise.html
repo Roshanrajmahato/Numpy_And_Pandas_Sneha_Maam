@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>Promise</button>
+    <script>
+      document.querySelector("button").addEventListener("click", () => {
+        const myPromise = new Promise((resolve, reject) => {
+          let x = 102;
+
+          setTimeout(() => {
+            if (x === 100) {
+              resolve("Yes... working properly");
+            } else {
+              reject("Oops... it's not working");
+            }
+          }, 5000);
+        });
+
+        myPromise
+          .then((res) => {
+            console.log("Promise is resolved: ", res);
+          })
+          .catch((err) => {
+            console.log("Promise rejected: ", err);
+          })
+          .finally(() => {
+            console.log("Promise completed");
+          });
+
+        console.log(myPromise);
+      });
+    </script>
+  </body>
+</html>

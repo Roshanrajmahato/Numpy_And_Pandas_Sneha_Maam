@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 🚀 Auto Save Feature (Like Google Docs) -->
+    <textarea id="editor" placeholder="Start typing..."></textarea>
+    <p id="status"></p>
+
+    <script>
+      const editor = document.getElementById("editor");
+      const status = document.getElementById("status");
+
+      editor.addEventListener("input", () => {
+        status.textContent = "Saving...";
+
+        setTimeout(() => {
+          status.textContent = "Saved ✅";
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>
